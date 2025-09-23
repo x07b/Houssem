@@ -49,7 +49,7 @@ export const handleCheckout: RequestHandler = async (req, res) => {
     createdAt: Date.now(),
     customer: { name: parsed.data.name, email: parsed.data.email, whatsapp: parsed.data.whatsapp },
     currency: parsed.data.currency,
-    items: parsed.data.items,
+    items: parsed.data.items as Order["items"],
     status: "pending",
     promoCode: parsed.data.promoCode,
   };
