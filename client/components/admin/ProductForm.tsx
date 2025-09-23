@@ -84,6 +84,32 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
         <input type="number" className="rounded border px-3 py-2 bg-background w-32" value={discountPercent} onChange={(e)=>setDiscountPercent(Number(e.target.value))} />
       </div>
 
+      <div className="grid gap-2 md:grid-cols-2">
+        <div className="grid gap-2">
+          <label className="text-sm font-medium">Category</label>
+          <select className="rounded border px-3 py-2 bg-background" value={category} onChange={(e)=>setCategory(e.target.value as any)}>
+            <option value="gaming">Gaming</option>
+            <option value="giftcards">Gift Cards</option>
+            <option value="software">Software</option>
+            <option value="subscriptions">Subscriptions</option>
+          </select>
+        </div>
+        <div className="grid gap-2">
+          <label className="text-sm font-medium">Platform</label>
+          <select className="rounded border px-3 py-2 bg-background" value={platform} onChange={(e)=>setPlatform(e.target.value as any)}>
+            <option value="generic">Generic</option>
+            <option value="pc">PC</option>
+            <option value="steam">Steam</option>
+            <option value="xbox">Xbox</option>
+            <option value="playstation">PlayStation</option>
+            <option value="nintendo">Nintendo</option>
+            <option value="riot">Riot</option>
+            <option value="origin">EA/Origin</option>
+            <option value="uplay">Ubisoft</option>
+          </select>
+        </div>
+      </div>
+
       <div className="grid gap-2">
         <div className="flex items-center justify-between">
           <label className="text-sm font-medium">Variants (optional)</label>
