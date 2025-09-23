@@ -63,7 +63,7 @@ const I18nContext = createContext<I18nContextValue | undefined>(undefined);
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Language>(() => (localStorage.getItem("lang") as Language) || "en");
 
-  const dir = lang === "ar" ? "rtl" : "ltr";
+  const dir: "ltr" | "rtl" = lang === "ar" ? "rtl" : "ltr";
 
   useEffect(() => {
     document.documentElement.lang = lang;
