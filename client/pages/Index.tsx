@@ -18,6 +18,9 @@ export default function Index() {
           <h2 className="text-2xl md:text-3xl font-extrabold">Hottest Deals</h2>
           <span className="text-sm text-primary">Limited time</span>
         </div>
+
+        <Filters />
+
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((p) => (
             <ProductCard key={p.id} product={p} />
