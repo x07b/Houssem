@@ -6,6 +6,9 @@ export interface ProductVariant {
   price: Record<Currency, number>;
 }
 
+export type ProductCategory = "gaming" | "giftcards" | "software" | "subscriptions";
+export type ProductPlatform = "pc" | "steam" | "xbox" | "playstation" | "nintendo" | "riot" | "origin" | "uplay" | "generic";
+
 export interface AdminProduct {
   id: string;
   title: string;
@@ -14,6 +17,8 @@ export interface AdminProduct {
   price: Record<Currency, number>;
   discountPercent?: number;
   variants?: ProductVariant[];
+  category?: ProductCategory;
+  platform?: ProductPlatform;
 }
 
 export interface Banner {
