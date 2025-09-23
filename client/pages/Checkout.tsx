@@ -18,6 +18,7 @@ export default function Checkout() {
   const [promoCode, setPromoCode] = useState("");
   const [result, setResult] = useState<{ code: string; whatsapp: string | null; emailSent: boolean }|null>(null);
   const [loading, setLoading] = useState(false);
+  const [notes, setNotes] = useState("");
 
   const list = useMemo(()=> items.map(it=> ({ ...it, product: productsById[it.id] })), [items, productsById]);
 
