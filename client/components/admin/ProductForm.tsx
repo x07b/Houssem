@@ -17,6 +17,8 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
   const [price, setPrice] = useState(initial?.price || { ...emptyPrice });
   const [discountPercent, setDiscountPercent] = useState<number>(initial?.discountPercent || 0);
   const [variants, setVariants] = useState<ProductVariant[]>(initial?.variants || []);
+  const [category, setCategory] = useState<"gaming"|"giftcards"|"software"|"subscriptions">((initial as any)?.category || "gaming");
+  const [platform, setPlatform] = useState<"pc"|"steam"|"xbox"|"playstation"|"nintendo"|"riot"|"origin"|"uplay"|"generic">((initial as any)?.platform || "generic");
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
