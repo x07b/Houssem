@@ -4,6 +4,7 @@ import Layout from "@/components/layout/Layout";
 import { useProducts } from "@/context/ProductsContext";
 import { Gift, CreditCard } from "lucide-react";
 import { useI18n } from "@/context/I18nContext";
+import Filters from "@/components/Filters";
 
 export default function Index() {
   const { t } = useI18n();
