@@ -14,7 +14,7 @@ export default function ProductCard({ product }: { product: AdminProduct }) {
   return (
     <motion.div whileHover={{ y: -6 }} className="group rounded-xl bg-card border shadow-sm overflow-hidden">
       <Link to={`/product/${product.id}`} className="block">
-        <img src={product.image} alt={product.title} className="h-44 md:h-56 w-full object-cover" />
+        <img src={product.image} alt={product.title} loading="lazy" className="h-44 md:h-56 w-full object-cover" />
       </Link>
       <div className="p-4">
         <div className="flex items-center justify-between gap-3">

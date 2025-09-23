@@ -4,6 +4,7 @@ import Layout from "@/components/layout/Layout";
 import { useProducts } from "@/context/ProductsContext";
 import { Gift, CreditCard } from "lucide-react";
 import { useI18n } from "@/context/I18nContext";
+import Filters from "@/components/Filters";
 
 export default function Index() {
   const { t } = useI18n();
@@ -18,11 +19,9 @@ export default function Index() {
           <h2 className="text-2xl md:text-3xl font-extrabold">Hottest Deals</h2>
           <span className="text-sm text-primary">Limited time</span>
         </div>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
+
+        <Filters />
+
       </section>
 
       <section className="mt-14 rounded-2xl border bg-card p-6 md:p-8 grid md:grid-cols-2 gap-6 items-center">

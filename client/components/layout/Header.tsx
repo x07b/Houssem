@@ -3,6 +3,7 @@ import { useCurrency, Currency } from "@/context/CurrencyContext";
 import { ShoppingCart, Globe, Coins } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Header() {
   const { t, lang, setLang } = useI18n();
@@ -34,6 +35,7 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-3 md:gap-5">
+          <ThemeToggle />
           <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
             <Coins className="w-4 h-4" />
             <select

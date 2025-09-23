@@ -47,6 +47,24 @@
         }
       ],
       "status": "pending"
+    },
+    {
+      "code": "ORD-UAV57E",
+      "createdAt": 1758633701326,
+      "customer": {
+        "name": "Aziz SAIDI",
+        "email": "itsazizsaidi@gmail.com",
+        "whatsapp": "54269211"
+      },
+      "currency": "USD",
+      "items": [
+        {
+          "id": "6d023743-1c06-49a1-8d35-c0b8a9210b31",
+          "qty": 2
+        }
+      ],
+      "status": "pending",
+      "notes": "HEY"
     }
   ]
 }

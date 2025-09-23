@@ -17,6 +17,8 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
   const [price, setPrice] = useState(initial?.price || { ...emptyPrice });
   const [discountPercent, setDiscountPercent] = useState<number>(initial?.discountPercent || 0);
   const [variants, setVariants] = useState<ProductVariant[]>(initial?.variants || []);
+  const [category, setCategory] = useState<"gaming"|"giftcards"|"software"|"subscriptions">((initial as any)?.category || "gaming");
+  const [platform, setPlatform] = useState<"pc"|"steam"|"xbox"|"playstation"|"nintendo"|"riot"|"origin"|"uplay"|"generic">((initial as any)?.platform || "generic");
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -43,7 +45,7 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
   }
 
   function submit() {
-    onSave({ title, description, image, price, discountPercent, variants });
+    onSave({ title, description, image, price, discountPercent, variants, category, platform } as any);
   }
 
   return (
@@ -80,6 +82,32 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
       <div className="grid gap-2">
         <label className="text-sm font-medium">Discount %</label>
         <input type="number" className="rounded border px-3 py-2 bg-background w-32" value={discountPercent} onChange={(e)=>setDiscountPercent(Number(e.target.value))} />
+      </div>
+
+      <div className="grid gap-2 md:grid-cols-2">
+        <div className="grid gap-2">
+          <label className="text-sm font-medium">Category</label>
+          <select className="rounded border px-3 py-2 bg-background" value={category} onChange={(e)=>setCategory(e.target.value as any)}>
+            <option value="gaming">Gaming</option>
+            <option value="giftcards">Gift Cards</option>
+            <option value="software">Software</option>
+            <option value="subscriptions">Subscriptions</option>
+          </select>
+        </div>
+        <div className="grid gap-2">
+          <label className="text-sm font-medium">Platform</label>
+          <select className="rounded border px-3 py-2 bg-background" value={platform} onChange={(e)=>setPlatform(e.target.value as any)}>
+            <option value="generic">Generic</option>
+            <option value="pc">PC</option>
+            <option value="steam">Steam</option>
+            <option value="xbox">Xbox</option>
+            <option value="playstation">PlayStation</option>
+            <option value="nintendo">Nintendo</option>
+            <option value="riot">Riot</option>
+            <option value="origin">EA/Origin</option>
+            <option value="uplay">Ubisoft</option>
+          </select>
+        </div>
       </div>
 
       <div className="grid gap-2">

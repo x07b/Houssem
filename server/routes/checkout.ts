@@ -11,11 +11,14 @@ const Input = z.object({
   currency: z.enum(["USD","TND","EGP","EUR"]),
   items: z.array(z.object({ id: z.string(), qty: z.number().int().positive() })),
   promoCode: z.string().trim().toUpperCase().optional(),
+  notes: z.string().max(1000).optional(),
 });
 
 function genCode() {
-  const n = Math.floor(10000 + Math.random()*89999);
-  return `PNR-${n}`;
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let s = "";
+  for (let i=0;i<6;i++) s += chars[Math.floor(Math.random()*chars.length)];
+  return `ORD-${s}`;
 }
 
 async function sendEmails(order: Order) {
@@ -32,10 +35,12 @@ async function sendEmails(order: Order) {
     auth: { user: SMTP_USER, pass: SMTP_PASS },
   });
   const itemsList = order.items.map(i=>`- ${i.id} x${i.qty}`).join("\n");
-  const subject = `Order ${order.code}`;
-  const txt = `Order ${order.code}\nCustomer: ${order.customer.name}\nEmail: ${order.customer.email}\nWhatsApp: ${order.customer.whatsapp}\nCurrency: ${order.currency}\nPromo: ${order.promoCode ?? "-"}\nItems:\n${itemsList}`;
-  await transporter.sendMail({ from: SMTP_USER, to: ADMIN_EMAIL, subject, text: txt });
-  await transporter.sendMail({ from: SMTP_USER, to: order.customer.email, subject, text: `Thank you! Use code ${order.code}.\n\n${txt}` });
+  const userSubject = `🎉 Your Order Confirmation – Panier Code: ${order.code}`;
+  const userBody = `Hi ${order.customer.name},\n\nThank you for your purchase at Your Store Name! 🎮✨\n\nHere are your order details:\nPanier Code: ${order.code}\nItems Ordered:\n${itemsList}\n\nYour Info:\nFull Name: ${order.customer.name}\nEmail: ${order.customer.email}\nPhone: ${order.customer.whatsapp}\nNotes: ${order.notes ?? "-"}\n\n🔑 You’ll receive your digital product codes by email once the order is processed. If you have any questions, simply reply to this email.\n\nThanks for shopping with us,\nYour Store Name Team`;
+  const adminSubject = `📥 New Order Received – Panier Code: ${order.code}`;
+  const adminBody = `Hello Admin,\n\nA new order has been placed on your store.\n\nPanier Code: ${order.code}\nItems Ordered:\n${itemsList}\n\nCustomer Details:\nFull Name: ${order.customer.name}\nEmail: ${order.customer.email}\nPhone: ${order.customer.whatsapp}\nNotes: ${order.notes ?? "-"}\n\n⚡ Please process this order and deliver the digital products.\n\nBest,\nYour System`;
+  await transporter.sendMail({ from: SMTP_USER, to: ADMIN_EMAIL, subject: adminSubject, text: adminBody });
+  await transporter.sendMail({ from: SMTP_USER, to: order.customer.email, subject: userSubject, text: userBody });
   return true;
 }
 
@@ -49,9 +54,10 @@ export const handleCheckout: RequestHandler = async (req, res) => {
     createdAt: Date.now(),
     customer: { name: parsed.data.name, email: parsed.data.email, whatsapp: parsed.data.whatsapp },
     currency: parsed.data.currency,
-    items: parsed.data.items,
+    items: parsed.data.items as Order["items"],
     status: "pending",
     promoCode: parsed.data.promoCode,
+    notes: parsed.data.notes,
   };
   store.orders.push(order);
   writeStore(store);
