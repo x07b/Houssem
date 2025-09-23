@@ -2,10 +2,11 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 
-export type AdminSection = "dashboard" | "products" | "banners" | "promos" | "settings";
+export type AdminSection = "dashboard" | "orders" | "products" | "banners" | "promos" | "settings";
 
 const NAV: { key: AdminSection; label: string }[] = [
   { key: "dashboard", label: "Dashboard" },
+  { key: "orders", label: "Orders" },
   { key: "products", label: "Products" },
   { key: "banners", label: "Banners" },
   { key: "promos", label: "Promos" },

@@ -4,6 +4,7 @@ import ProductsManager from "@/components/admin/ProductsManager";
 import BannersManager from "@/components/admin/BannersManager";
 import PromosManager from "@/components/admin/PromosManager";
 import SettingsPane from "@/components/admin/SettingsPane";
+import OrdersManager from "@/components/admin/OrdersManager";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +32,7 @@ export default function Admin() {
             <div className="border rounded-2xl p-4">Welcome to the admin dashboard.</div>
           </div>
         )}
+        {section === "orders" && <OrdersManager token={token} />}
         {section === "products" && <ProductsManager token={token} />}
         {section === "banners" && <BannersManager token={token} />}
         {section === "promos" && <PromosManager token={token} />}

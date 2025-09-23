@@ -4,7 +4,7 @@ import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { handleSendEmail } from "./routes/order";
 import { adminLogin, requireAuth, listProducts, createProduct, updateProduct, deleteProduct, listBanners, upsertBanner, deleteBanner, getToggles, setToggles, listPromos, upsertPromo, deletePromo } from "./routes/admin";
-import { handleCheckout, getOrderByCode } from "./routes/checkout";
+import { handleCheckout, getOrderByCode, listOrders } from "./routes/checkout";
 import { validatePromo } from "./routes/promo";
 import { listPublicProducts, getPublicProduct } from "./routes/products";
 
@@ -25,12 +25,15 @@ export function createServer() {
   app.get("/api/demo", handleDemo);
   app.post("/api/send-email", handleSendEmail);
   app.post("/api/checkout", handleCheckout);
+  app.post("/api/orders", handleCheckout);
+  app.get("/api/orders/:code", getOrderByCode);
   app.get("/api/promo/:code", validatePromo);
   app.get("/api/products", listPublicProducts);
   app.get("/api/products/:id", getPublicProduct);
 
   // Admin API
   app.post("/api/admin/login", adminLogin);
+  app.get("/api/admin/orders", requireAuth, listOrders);
   app.get("/api/admin/orders/:code", requireAuth, getOrderByCode);
 
   app.get("/api/admin/products", requireAuth, listProducts);

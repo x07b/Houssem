@@ -36,7 +36,7 @@ export default function ProductPage() {
       <div className="grid md:grid-cols-2 gap-6">
         <div>
           {product.image && (
-            <img src={product.image} alt={product.title} className="w-full rounded-xl border object-cover" />
+            <img src={product.image} alt={product.title} loading="lazy" className="w-full rounded-xl border object-cover" />
           )}
         </div>
         <div>

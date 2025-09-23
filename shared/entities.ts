@@ -40,7 +40,7 @@ export interface HomeToggles {
   showPromo: boolean;
 }
 
-export interface OrderItem { id: string; qty: number; }
+export interface OrderItem { id: string; title: string; qty: number; unitPrice: number; currency: Currency; }
 
 export interface Order {
   code: string;
@@ -48,6 +48,7 @@ export interface Order {
   customer: { name: string; email: string; whatsapp: string };
   currency: Currency;
   items: OrderItem[];
+  subtotal: number;
   status: "pending" | "paid" | "cancelled";
   promoCode?: string;
   notes?: string;
