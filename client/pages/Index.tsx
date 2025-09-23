@@ -21,11 +21,6 @@ export default function Index() {
 
         <Filters />
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
       </section>
 
       <section className="mt-14 rounded-2xl border bg-card p-6 md:p-8 grid md:grid-cols-2 gap-6 items-center">
