@@ -45,7 +45,7 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
   }
 
   function submit() {
-    onSave({ title, description, image, price, discountPercent, variants });
+    onSave({ title, description, image, price, discountPercent, variants, category, platform } as any);
   }
 
   return (
