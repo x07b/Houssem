@@ -50,6 +50,7 @@ export interface Order {
   items: OrderItem[];
   status: "pending" | "paid" | "cancelled";
   promoCode?: string;
+  notes?: string;
 }
 
 export interface StoreState {
