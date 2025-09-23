@@ -28,7 +28,7 @@ export default function Checkout() {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, whatsapp, currency, items, promoCode: promoCode || undefined }),
+        body: JSON.stringify({ name, email, whatsapp, currency, items, promoCode: promoCode || undefined, notes: notes || undefined }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error("Checkout failed");
