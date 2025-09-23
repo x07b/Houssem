@@ -82,6 +82,7 @@ export default function Checkout() {
             <input className="rounded border px-3 py-2 bg-background" placeholder={t("fullname")} value={name} onChange={(e)=>setName(e.target.value)} />
             <input className="rounded border px-3 py-2 bg-background" placeholder={t("email")} value={email} onChange={(e)=>setEmail(e.target.value)} />
             <input className="rounded border px-3 py-2 bg-background" placeholder={t("whatsapp")} value={whatsapp} onChange={(e)=>setWhatsapp(e.target.value)} />
+            <textarea className="rounded border px-3 py-2 bg-background min-h-[80px]" placeholder="Additional notes (optional)" value={notes} onChange={(e)=>setNotes(e.target.value)} />
             <select className="rounded border px-3 py-2 bg-background" value={currency} onChange={(e)=>setCurrency(e.target.value as any)}>
               <option value="USD">USD</option>
               <option value="EUR">EUR</option>
