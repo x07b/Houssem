@@ -29,8 +29,12 @@ export function createServer() {
   app.get("/api/products", listPublicProducts);
   app.get("/api/products/:id", getPublicProduct);
 
+  // Orders API
+  app.get("/api/orders/:code", getOrderByCode);
+
   // Admin API
   app.post("/api/admin/login", adminLogin);
+  app.get("/api/admin/orders", requireAuth, listOrders);
   app.get("/api/admin/orders/:code", requireAuth, getOrderByCode);
 
   app.get("/api/admin/products", requireAuth, listProducts);
