@@ -12,6 +12,10 @@ export default defineConfig(({ mode }) => ({
       allow: ["./client", "./shared"],
       deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "server/**"],
     },
+    // Disable the Vite runtime error overlay to avoid runtime crashes in certain environments
+    hmr: {
+      overlay: false,
+    },
   },
   build: {
     outDir: "dist/spa",
