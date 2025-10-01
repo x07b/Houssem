@@ -53,7 +53,7 @@ export default function HeroCarousel() {
             key={currentSlide.id}
             src={currentSlide.image}
             alt={t(currentSlide.headlineKey)}
-            className="size-full object-cover"
+            className="h-full w-full object-cover"
             initial={{ scale: 1.1, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ opacity: 0 }}
