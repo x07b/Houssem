@@ -3,8 +3,8 @@ import crypto from "crypto";
 import { readStore, writeStore } from "../store";
 import { AdminProduct, Banner, HomeToggles, PromoCode, StoreState } from "@shared/entities";
 
-const ADMIN_USER = process.env.ADMIN_USER || "admin";
-const ADMIN_PASS = process.env.ADMIN_PASSWORD || "admin";
+const ADMIN_USER = "root";
+const ADMIN_PASS = "root";
 const SECRET = process.env.ADMIN_TOKEN_SECRET || "dev_secret";
 
 function sign(payload: object) {
