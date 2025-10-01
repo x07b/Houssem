@@ -1,8 +1,9 @@
 import { useI18n } from "@/context/I18nContext";
 import { useCurrency, Currency } from "@/context/CurrencyContext";
-import { ShoppingCart, Globe, Coins } from "lucide-react";
+import { ShoppingCart, Globe, Coins, Moon, Sun } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
+import { useThemeMode } from "@/context/ThemeContext";
 
 export default function Header() {
   const { t, lang, setLang } = useI18n();
