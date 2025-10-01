@@ -1,10 +1,20 @@
 import { AdminProduct } from "@shared/entities";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/context/CartContext";
 import { useCurrency } from "@/context/CurrencyContext";
 import { useI18n } from "@/context/I18nContext";
-import { useCart } from "@/context/CartContext";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
+
+function getBadgeLabel(product: AdminProduct, t: (key: string) => string) {
+  if (typeof product.discountPercent === "number" && product.discountPercent > 0) {
+    return `${product.discountPercent}% OFF`;
+  }
+  if ((product as any)?.tagline) return String((product as any).tagline);
+  return t("promo_instant");
+}
 
 export default function ProductCard({ product }: { product: AdminProduct }) {
   const { format } = useCurrency();
@@ -12,28 +22,61 @@ export default function ProductCard({ product }: { product: AdminProduct }) {
   const { add } = useCart();
 
   return (
-    <motion.div whileHover={{ y: -6 }} className="group rounded-xl bg-card border shadow-sm overflow-hidden">
-      <Link to={`/product/${product.id}`} className="block relative">
-        <img src={product.image} alt={product.title} className="h-44 md:h-56 w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]" />
+    <motion.article
+      whileHover={{ y: -12 }}
+      transition={{ duration: 0.3 }}
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-[box-shadow,border] hover:border-primary/40 hover:shadow-2xl"
+    >
+      <Link to={`/product/${product.id}`} className="relative block overflow-hidden">
+        <img
+          src={product.image}
+          alt={product.title}
+          loading="lazy"
+          className="h-48 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
         {((product as any)?.category || (product as any)?.platform) && (
-          <span className="absolute left-2 top-2 text-[11px] px-2 py-1 rounded-full bg-background/80 backdrop-blur border text-foreground">
+          <span className="absolute left-4 top-4 inline-flex items-center rounded-full bg-black/60 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-white backdrop-blur">
             {(product as any)?.platform || (product as any)?.category}
           </span>
         )}
-      </Link>
-      <div className="p-4">
-        <div className="flex items-center justify-between gap-3">
-          <h3 className="font-semibold text-base md:text-lg line-clamp-1">{product.title}</h3>
-          <span className="text-primary font-bold">{format(product.price.USD)}</span>
-        </div>
-        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{product.description}</p>
-        <div className="mt-3 flex items-center justify-between">
-          <span className="text-xs px-2 py-1 rounded bg-accent/20 text-accent-foreground min-w-10 text-center">
-            {product.discountPercent ? `-${product.discountPercent}%` : "Deal"}
+        <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between text-white">
+          <h3 className="max-w-[70%] text-lg font-semibold leading-snug line-clamp-2">
+            {product.title}
+          </h3>
+          <span className="rounded-lg bg-white/15 px-3 py-1 text-sm font-semibold">
+            {format(product.price.USD)}
           </span>
-          <Button size="sm" onClick={() => add(product.id)} className="shadow-sm">{t("add_to_cart")}</Button>
+        </div>
+      </Link>
+
+      <div className="flex flex-1 flex-col gap-5 p-6">
+        <p className="text-sm text-muted-foreground line-clamp-3">
+          {product.description}
+        </p>
+        <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <span>{t("delivery_method")}</span>
+          <span className="text-right">{t("supported_currencies")}</span>
+        </div>
+        <div className="mt-auto flex items-center gap-3">
+          <span
+            className={cn(
+              "inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary",
+              "shadow-sm shadow-primary/20",
+            )}
+          >
+            {getBadgeLabel(product, t)}
+          </span>
+          <Button
+            size="lg"
+            className="flex-1 rounded-xl text-sm font-semibold shadow-lg shadow-primary/30 transition-all group-hover:-translate-y-0.5 group-hover:shadow-primary/40"
+            onClick={() => add(product.id)}
+          >
+            <ShoppingCart className="size-4" />
+            {t("add_to_cart")}
+          </Button>
         </div>
       </div>
-    </motion.div>
+    </motion.article>
   );
 }
