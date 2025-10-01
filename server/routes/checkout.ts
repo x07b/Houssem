@@ -63,7 +63,7 @@ export const handleCheckout: RequestHandler = async (req, res) => {
   writeStore(store);
   const emailSent = await sendEmails(order).catch(()=>false);
   const whatsapp = process.env.WHATSAPP_NUMBER || null;
-  res.json({ code, whatsapp, emailSent });
+  res.json({ panierCode: code, whatsapp, emailSent });
 };
 
 export const getOrderByCode: RequestHandler = (req, res) => {
