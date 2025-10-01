@@ -82,7 +82,7 @@ const TRANSLATIONS: Dict = {
   hero_slide_1_body: {
     en: "Instant digital codes for consoles, PC, and mobile squads.",
     fr: "Codes numériques instantanés pour consoles, PC et mobile.",
-    ar: "أكواد رقمية فورية لأج��زة الألعاب والحاسوب والجوال.",
+    ar: "أكواد رقمية فورية لأجهزة الألعاب والحاسوب والجوال.",
   },
   hero_slide_2_heading: {
     en: "Esports-Ready Gift Cards",
@@ -124,6 +124,11 @@ const TRANSLATIONS: Dict = {
     fr: "Accès anticipé aux prochaines sorties",
     ar: "وصول مبكر للإصدارات القادمة",
   },
+  no_products: {
+    en: "Products will appear here soon.",
+    fr: "Les produits seront bientôt disponibles ici.",
+    ar: "ستظهر المنتجات هنا قريبًا.",
+  },
   newsletter_cta_heading: {
     en: "Stay in the winner's circle",
     fr: "Restez dans le cercle des gagnants",
@@ -147,7 +152,7 @@ const TRANSLATIONS: Dict = {
   step_payment: { en: "Payment", fr: "Paiement", ar: "الدفع" },
   step_done: { en: "Confirmation", fr: "Confirmation", ar: "تأكيد" },
   fullname: { en: "Full Name", fr: "Nom complet", ar: "الاسم الكامل" },
-  email: { en: "Email", fr: "Email", ar: "البريد الإلكتروني" },
+  email: { en: "Email", fr: "Email", ar: "البريد الإلكترو��ي" },
   whatsapp: { en: "WhatsApp Number", fr: "Numéro WhatsApp", ar: "رقم الواتساب" },
   currency: { en: "Currency", fr: "Devise", ar: "العملة" },
   continue: { en: "Continue", fr: "Continuer", ar: "متابعة" },
@@ -160,7 +165,7 @@ const TRANSLATIONS: Dict = {
   remove: { en: "Remove", fr: "Retirer", ar: "إزالة" },
   discount: { en: "Discount", fr: "Remise", ar: "خصم" },
   total_label: { en: "Total", fr: "Total", ar: "الإجمالي" },
-  invalid_code: { en: "Invalid or inactive code", fr: "Code invalide ou inactif", ar: "رمز غير صالح أو غير نشط" },
+  invalid_code: { en: "Invalid or inactive code", fr: "Code invalide ou inactif", ar: "رمز غير ��الح أو غير نشط" },
   nav_gaming: { en: "Gaming", fr: "Jeux", ar: "الألعاب" },
   nav_software: { en: "Software", fr: "Logiciels", ar: "البرامج" },
   nav_subscriptions: { en: "Subscriptions", fr: "Abonnements", ar: "الاشتراكات" },
