@@ -41,6 +41,12 @@ export const requireAuth: RequestHandler = (req, res, next) => {
   next();
 };
 
+// Orders
+export const listOrders: RequestHandler = (_req, res) => {
+  const store = readStore();
+  res.json(store.orders);
+};
+
 // Products CRUD
 export const listProducts: RequestHandler = (_req, res) => res.json(readStore().products);
 export const createProduct: RequestHandler = (req, res) => {
