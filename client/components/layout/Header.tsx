@@ -35,6 +35,15 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-3 md:gap-5">
+          <button
+            className="inline-flex items-center justify-center w-9 h-9 rounded-full border hover:bg-muted"
+            aria-label="Toggle theme"
+            onClick={() => toggle()}
+            title="Toggle theme"
+          >
+            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+
           <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
             <Coins className="w-4 h-4" />
             <select
