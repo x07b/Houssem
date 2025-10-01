@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import { RequestHandler } from "express";
 import { z } from "zod";
 import { readStore, writeStore } from "../store";
 import { Order } from "@shared/entities";
@@ -14,8 +15,14 @@ const Input = z.object({
 });
 
 function genCode() {
-  const n = Math.floor(10000 + Math.random()*89999);
-  return `PNR-${n}`;
+  const now = new Date();
+  const y = String(now.getFullYear()).slice(-2);
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  const charset = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let rand = "";
+  for (let i = 0; i < 6; i++) rand += charset[Math.floor(Math.random() * charset.length)];
+  return `ORD-${y}${m}${d}-${rand}`;
 }
 
 async function sendEmails(order: Order) {
@@ -57,7 +64,7 @@ export const handleCheckout: RequestHandler = async (req, res) => {
   writeStore(store);
   const emailSent = await sendEmails(order).catch(()=>false);
   const whatsapp = process.env.WHATSAPP_NUMBER || null;
-  res.json({ code, whatsapp, emailSent });
+  res.json({ panierCode: code, whatsapp, emailSent });
 };
 
 export const getOrderByCode: RequestHandler = (req, res) => {

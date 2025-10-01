@@ -7,12 +7,50 @@
 
 @layer base {
   /**
-   * Tailwind CSS theme
-   * tailwind.config.ts expects the following color variables to be expressed as HSL values.
-   * A different format will require also updating the theme in tailwind.config.ts.
-  */
-  :root {
-    /* Dark background #191919 -> hsl(0 0% 10%) */
+   * Tailwind CSS theme via CSS variables and [data-theme]
+   */
+  :root[data-theme="light"] {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    --primary: 100 65% 40%;
+    --primary-foreground: 0 0% 100%;
+
+    --accent: 100 65% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 100 65% 40%;
+
+    --radius: 1rem;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 240 10% 3.9%;
+    --sidebar-primary: 100 65% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 100 65% 40%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 240 5.9% 90%;
+    --sidebar-ring: 100 65% 40%;
+  }
+
+  :root[data-theme="dark"] {
     --background: 0 0% 10%;
     --foreground: 0 0% 98%;
 
@@ -22,7 +60,6 @@
     --popover: 0 0% 12%;
     --popover-foreground: 0 0% 98%;
 
-    /* Accent / CTA #7ED957 */
     --primary: 100 65% 60%;
     --primary-foreground: 0 0% 10%;
 
@@ -35,7 +72,7 @@
     --muted: 0 0% 18%;
     --muted-foreground: 0 0% 70%;
 
-    --destructive: 0 65% 45%;
+    --destructive: 0 62% 35%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 0 0% 18%;
@@ -53,36 +90,6 @@
     --sidebar-border: 0 0% 18%;
     --sidebar-ring: 100 65% 60%;
   }
-
-  .dark {
-    --background: 0 0% 10%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 12%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 12%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 100 65% 60%;
-    --primary-foreground: 0 0% 10%;
-    --secondary: 0 0% 16%;
-    --secondary-foreground: 0 0% 96%;
-    --muted: 0 0% 18%;
-    --muted-foreground: 0 0% 70%;
-    --accent: 100 65% 60%;
-    --accent-foreground: 0 0% 10%;
-    --destructive: 0 62% 35%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 18%;
-    --input: 0 0% 18%;
-    --ring: 100 65% 60%;
-    --sidebar-background: 0 0% 10%;
-    --sidebar-foreground: 0 0% 96%;
-    --sidebar-primary: 100 65% 60%;
-    --sidebar-primary-foreground: 0 0% 10%;
-    --sidebar-accent: 100 65% 60%;
-    --sidebar-accent-foreground: 0 0% 10%;
-    --sidebar-border: 0 0% 18%;
-    --sidebar-ring: 100 65% 60%;
-  }
 }
 
 @layer base {
@@ -90,7 +97,12 @@
     @apply border-border;
   }
 
+  html, body, #root {
+    height: 100%;
+  }
+
   body {
     @apply bg-background text-foreground;
+    transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
   }
 }

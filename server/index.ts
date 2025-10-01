@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { handleSendEmail } from "./routes/order";
-import { adminLogin, requireAuth, listProducts, createProduct, updateProduct, deleteProduct, listBanners, upsertBanner, deleteBanner, getToggles, setToggles, listPromos, upsertPromo, deletePromo } from "./routes/admin";
+import { adminLogin, requireAuth, listProducts, createProduct, updateProduct, deleteProduct, listBanners, upsertBanner, deleteBanner, getToggles, setToggles, listPromos, upsertPromo, deletePromo, listOrders } from "./routes/admin";
 import { handleCheckout, getOrderByCode } from "./routes/checkout";
 import { validatePromo } from "./routes/promo";
 import { listPublicProducts, getPublicProduct } from "./routes/products";
@@ -29,8 +29,12 @@ export function createServer() {
   app.get("/api/products", listPublicProducts);
   app.get("/api/products/:id", getPublicProduct);
 
+  // Orders API
+  app.get("/api/orders/:code", getOrderByCode);
+
   // Admin API
   app.post("/api/admin/login", adminLogin);
+  app.get("/api/admin/orders", requireAuth, listOrders);
   app.get("/api/admin/orders/:code", requireAuth, getOrderByCode);
 
   app.get("/api/admin/products", requireAuth, listProducts);

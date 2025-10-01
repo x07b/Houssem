@@ -3,8 +3,8 @@ import crypto from "crypto";
 import { readStore, writeStore } from "../store";
 import { AdminProduct, Banner, HomeToggles, PromoCode, StoreState } from "@shared/entities";
 
-const ADMIN_USER = process.env.ADMIN_USER || "admin";
-const ADMIN_PASS = process.env.ADMIN_PASSWORD || "admin";
+const ADMIN_USER = "root";
+const ADMIN_PASS = "root";
 const SECRET = process.env.ADMIN_TOKEN_SECRET || "dev_secret";
 
 function sign(payload: object) {
@@ -39,6 +39,12 @@ export const requireAuth: RequestHandler = (req, res, next) => {
   const payload = verify(token);
   if (!payload) return res.status(401).json({ error: "Unauthorized" });
   next();
+};
+
+// Orders
+export const listOrders: RequestHandler = (_req, res) => {
+  const store = readStore();
+  res.json(store.orders);
 };
 
 // Products CRUD

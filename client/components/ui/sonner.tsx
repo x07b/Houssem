@@ -3,8 +3,14 @@ import { Toaster as Sonner } from "sonner";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
+function useThemeFromDom(): "light" | "dark" | "system" {
+  if (typeof document === "undefined") return "system";
+  const attr = document.documentElement.getAttribute("data-theme");
+  return (attr === "light" || attr === "dark") ? (attr as any) : "system";
+}
+
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme();
+  const theme = useThemeFromDom();
 
   return (
     <Sonner
