@@ -17,6 +17,8 @@ import { ProductsProvider } from "@/context/ProductsContext";
 import { AdminAuthProvider } from "@/context/AdminAuthContext";
 import AdminLogin from "./pages/AdminLogin";
 import Admin from "./pages/Admin";
+import { ThemeProvider } from "@/context/ThemeContext";
+import OrderSuccess from "./pages/OrderSuccess";
 
 const queryClient = new QueryClient();
 
