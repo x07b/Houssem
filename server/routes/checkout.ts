@@ -14,8 +14,14 @@ const Input = z.object({
 });
 
 function genCode() {
-  const n = Math.floor(10000 + Math.random()*89999);
-  return `PNR-${n}`;
+  const now = new Date();
+  const y = String(now.getFullYear()).slice(-2);
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  const charset = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let rand = "";
+  for (let i = 0; i < 6; i++) rand += charset[Math.floor(Math.random() * charset.length)];
+  return `ORD-${y}${m}${d}-${rand}`;
 }
 
 async function sendEmails(order: Order) {
