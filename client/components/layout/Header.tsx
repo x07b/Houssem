@@ -10,6 +10,7 @@ export default function Header() {
   const { currency, setCurrency, format } = useCurrency();
   const { items } = useCart();
   const navigate = useNavigate();
+  const { theme, toggle } = useThemeMode();
 
   return (
     <header className="sticky top-0 z-40 bg-background/80 backdrop-blur border-b">
