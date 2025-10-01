@@ -55,7 +55,7 @@ interface I18nContextValue {
   lang: Language;
   dir: "ltr" | "rtl";
   setLang: (l: Language) => void;
-  t: (key: keyof typeof TRANSLATIONS) => string;
+  t: (key: string) => string;
 }
 
 const I18nContext = createContext<I18nContextValue | undefined>(undefined);
@@ -73,7 +73,15 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
   const setLang = useCallback((l: Language) => setLangState(l), []);
 
-  const t = useCallback((key: keyof typeof TRANSLATIONS) => TRANSLATIONS[key][lang], [lang]);
+  const t = useCallback((key: string) => {
+    try {
+      const entry = (TRANSLATIONS as any)[key];
+      if (entry && typeof entry === "object") return entry[lang] ?? entry["en"] ?? "";
+      return String(key);
+    } catch {
+      return String(key);
+    }
+  }, [lang]);
 
   const value = useMemo(() => ({ lang, dir, setLang, t }), [lang, dir, setLang, t]);
 
