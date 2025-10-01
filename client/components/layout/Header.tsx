@@ -32,7 +32,7 @@ export default function Header() {
           <div className="hidden md:flex flex-1 mx-4">
             <input
               className="w-full rounded-full border bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              placeholder={t("search") || "Search games, cards..."}
+              placeholder="Search games, gift cards..."
               aria-label="Search"
             />
           </div>
