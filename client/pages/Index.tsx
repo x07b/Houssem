@@ -175,7 +175,7 @@ export default function Index() {
           <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {products.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-border/70 p-10 text-center text-muted-foreground">
-                {t("empty_cart")}
+                {t("no_products")}
               </div>
             ) : (
               products.map((product) => <ProductCard key={product.id} product={product} />)
@@ -197,7 +197,7 @@ export default function Index() {
           <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {products.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-border/70 p-10 text-center text-muted-foreground">
-                {t("empty_cart")}
+                {t("no_products")}
               </div>
             ) : (
               products.map((product) => <ProductCard key={`new-${product.id}`} product={product} />)
