@@ -1,7 +1,7 @@
 import HeroCarousel from "@/components/HeroCarousel";
 import ProductCard from "@/components/ProductCard";
 import Layout from "@/components/layout/Layout";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useProducts } from "@/context/ProductsContext";
 import { useI18n } from "@/context/I18nContext";
@@ -11,6 +11,7 @@ import {
   Gamepad2,
   Monitor,
   Trophy,
+  type LucideIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -75,7 +76,7 @@ const categories = [
   id: string;
   titleKey: string;
   bodyKey: string;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  icon: LucideIcon;
   accent: string;
 }>;
 
@@ -192,9 +193,6 @@ export default function Index() {
                 {t("new_and_upcoming_tag")}
               </p>
             </div>
-            <Button asChild size="lg" variant="ghost">
-              <Link to="/products/new">{t("view_details")}</Link>
-            </Button>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {products.length === 0 ? (
