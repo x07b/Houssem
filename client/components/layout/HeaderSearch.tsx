@@ -181,31 +181,29 @@ export default function HeaderSearch() {
     <>
       {/* Desktop inline search */}
       <div className="hidden lg:block">
-        <Popover>
-          <PopoverTrigger asChild>
+        <div className="relative w-[480px] focus-within:w-[640px] transition-all duration-200">
+          <Command className="rounded-full border bg-background text-foreground">
             <div className="relative">
-              <Input
-                role="combobox"
+              <CommandInput
+                placeholder="Search games, gift cards, software…"
+                value={query}
+                onValueChange={setQuery}
                 aria-expanded={results.length > 0}
                 aria-controls="search-desktop-list"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search games, gift cards, software…"
-                className={cn(
-                  "rounded-full pl-10 pr-10 transition-all duration-200 w-[480px] focus:w-[640px]",
-                  loading ? "pr-12" : "",
-                )}
+                className="h-11 pl-10 rounded-full"
               />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               {loading && (
-                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />)
-              }
+                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
+              )}
             </div>
-          </PopoverTrigger>
-          <PopoverContent align="start" className="p-0 w-[640px]" id="search-desktop-list">
-            <Command>{desktopList}</Command>
-          </PopoverContent>
-        </Popover>
+            {(results.length > 0 || (!query && recent.length > 0)) && (
+              <div id="search-desktop-list" className="absolute left-0 right-0 top-full mt-2 z-50 rounded-md border bg-popover text-popover-foreground shadow-md overflow-hidden">
+                {desktopList}
+              </div>
+            )}
+          </Command>
+        </div>
       </div>
 
       {/* Mobile/Tablet icon + overlay */}
