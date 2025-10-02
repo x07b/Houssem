@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { slugify } from "@/lib/utils";
 
 function getBadgeLabel(product: AdminProduct, t: (key: string) => string) {
   if (typeof product.discountPercent === "number" && product.discountPercent > 0) {
