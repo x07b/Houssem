@@ -4,6 +4,7 @@ import ProductsManager from "@/components/admin/ProductsManager";
 import BannersManager from "@/components/admin/BannersManager";
 import PromosManager from "@/components/admin/PromosManager";
 import SettingsPane from "@/components/admin/SettingsPane";
+import CategoriesManager from "@/components/admin/CategoriesManager";
 import OrderLookup from "@/components/admin/OrderLookup";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 import { useEffect, useState } from "react";
