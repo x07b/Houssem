@@ -4,19 +4,20 @@ import { ShoppingCart, Globe, Coins, Moon, Sun } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import { useThemeMode } from "@/context/ThemeContext";
+import HeaderSearch from "./HeaderSearch";
 
 export default function Header() {
   const { t, lang, setLang } = useI18n();
-  const { currency, setCurrency, format } = useCurrency();
+  const { currency, setCurrency } = useCurrency();
   const { items } = useCart();
   const navigate = useNavigate();
   const { theme, toggle } = useThemeMode();
 
   return (
-    <header className="sticky top-0 z-40 bg-background/80 backdrop-blur border-b">
+    <header className="sticky top-0 z-40 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
       <div className="container px-4 md:px-8 h-16 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-6">
-          <Link to="/" className="flex items-center gap-2">
+        <div className="flex items-center gap-4 md:gap-6 min-w-0">
+          <Link to="/" className="flex items-center gap-2 shrink-0">
             <img
               src={theme === "dark"
                 ? "https://cdn.builder.io/api/v1/image/assets%2Fe4359f63018e41f4b5c3ebff8141a6d7%2Feceee5aa4bb943ce86875a5482e4b031?format=webp&width=200"
@@ -25,19 +26,17 @@ export default function Header() {
               className="h-8 md:h-9 w-auto"
             />
           </Link>
+
           <button className="hidden md:inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
             {t("nav_categories")}
           </button>
 
-          <div className="hidden md:flex flex-1 mx-4">
-            <input
-              className="w-full rounded-full border bg-background px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              placeholder="Search games, gift cards..."
-              aria-label="Search"
-            />
+          {/* Responsive Search: desktop inline, smaller screens icon + overlay */}
+          <div className="flex-1 min-w-0">
+            <HeaderSearch />
           </div>
 
-          <ul className="hidden md:flex items-center gap-6 ml-4 text-sm text-muted-foreground">
+          <ul className="hidden md:flex items-center gap-6 ml-2 text-sm text-muted-foreground">
             <li><Link to="/?cat=gaming" className="hover:text-foreground flex items-center gap-2">{t("nav_gaming")}</Link></li>
             <li><Link to="/?cat=software" className="hover:text-foreground flex items-center gap-2">{t("nav_software")}</Link></li>
             <li><Link to="/?cat=subscriptions" className="hover:text-foreground flex items-center gap-2">{t("nav_subscriptions")}</Link></li>
@@ -47,9 +46,8 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-3 md:gap-5">
-          <button className="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border hover:bg-muted" aria-label="Search">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
-          </button>
+          {/* Search icon for small screens is inside HeaderSearch */}
+
           <button
             className="inline-flex items-center justify-center w-9 h-9 rounded-full border hover:bg-muted"
             aria-label="Toggle theme"

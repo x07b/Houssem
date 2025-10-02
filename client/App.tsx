@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ProductPage from "./pages/Product";
+import Search from "./pages/Search";
 import Checkout from "./pages/Checkout";
 import { I18nProvider } from "@/context/I18nContext";
 import { CurrencyProvider } from "@/context/CurrencyContext";
@@ -37,6 +38,7 @@ const App = () => (
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/product/:id" element={<ProductPage />} />
+                    <Route path="/search" element={<Search />} />
                     <Route path="/checkout" element={<Checkout />} />
                     <Route path="/order-success" element={<OrderSuccess />} />
                     <Route path="/admin/login" element={<AdminLogin />} />

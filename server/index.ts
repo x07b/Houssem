@@ -7,6 +7,7 @@ import { adminLogin, requireAuth, listProducts, createProduct, updateProduct, de
 import { handleCheckout, getOrderByCode } from "./routes/checkout";
 import { validatePromo } from "./routes/promo";
 import { listPublicProducts, getPublicProduct } from "./routes/products";
+import { handleSuggest } from "./routes/suggest";
 
 export function createServer() {
   const app = express();
@@ -28,6 +29,7 @@ export function createServer() {
   app.get("/api/promo/:code", validatePromo);
   app.get("/api/products", listPublicProducts);
   app.get("/api/products/:id", getPublicProduct);
+  app.get("/api/suggest", handleSuggest);
 
   // Orders API
   app.get("/api/orders/:code", getOrderByCode);
