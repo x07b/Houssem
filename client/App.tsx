@@ -15,6 +15,7 @@ import { I18nProvider } from "@/context/I18nContext";
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { CartProvider } from "@/context/CartContext";
 import { ProductsProvider } from "@/context/ProductsContext";
+import { CategoriesProvider } from "@/context/CategoriesContext";
 import { AdminAuthProvider } from "@/context/AdminAuthContext";
 import AdminLogin from "./pages/AdminLogin";
 import Admin from "./pages/Admin";
