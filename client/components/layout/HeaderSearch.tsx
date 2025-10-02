@@ -318,12 +318,12 @@ export default function HeaderSearch() {
 
       {/* Desktop anchored overlay with backdrop */}
       {overlayOpen && typeof window !== 'undefined' && window.innerWidth >= 1024 && createPortal(
-        <div className="fixed inset-0 z-50">
-          <div className="absolute inset-0 bg-black/60 data-[state=open]:animate-in data-[state=open]:fade-in-0" onClick={() => setOverlayOpen(false)} />
+        <div className="fixed inset-0 z-50" ref={overlayRootRef}>
+          <div className="absolute inset-0 bg-black/60 motion-safe:data-[state=open]:animate-in motion-safe:data-[state=open]:fade-in-0" onClick={() => setOverlayOpen(false)} />
           <div className="absolute inset-x-0 top-16">
             <div className="mx-auto container px-4 md:px-8">
-              <div className="rounded-b-md border bg-background shadow-lg data-[state=open]:animate-in data-[state=open]:slide-in-from-top-2 data-[state=open]:fade-in-0">
-                <div className="h-16 flex items-center gap-2 px-3 md:px-4 border-b">
+              <div className="rounded-b-md border bg-background shadow-lg motion-safe:data-[state=open]:animate-in motion-safe:data-[state=open]:slide-in-from-top-2 motion-safe:data-[state=open]:fade-in-0">
+                <div className="h-16 md:h-18 flex items-center gap-2 px-3 md:px-4 border-b">
                   <div className="relative flex-1">
                     <Command>
                       <div className="relative">
@@ -344,7 +344,7 @@ export default function HeaderSearch() {
                       </div>
                     </Command>
                   </div>
-                  <button aria-label="Close search" className="inline-flex items-center justify-center w-9 h-9 rounded-full border hover:bg-muted" onClick={() => setOverlayOpen(false)}>
+                  <button aria-label="Close search" className="inline-flex items-center justify-center w-9 h-9 rounded-full border hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => setOverlayOpen(false)}>
                     <X className="h-5 w-5" />
                   </button>
                 </div>
