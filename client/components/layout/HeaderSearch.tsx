@@ -97,6 +97,7 @@ export default function HeaderSearch() {
   const abortRef = useRef<AbortController | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const overlayRootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     abortRef.current?.abort();
