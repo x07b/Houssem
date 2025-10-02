@@ -27,22 +27,11 @@ export default function Header() {
             />
           </Link>
 
-          <button className="hidden md:inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
-            {t("nav_categories")}
-          </button>
+          {/* Search icon trigger */}
+          <HeaderSearch />
 
-          {/* Responsive Search: desktop inline, smaller screens icon + overlay */}
-          <div className="flex-1 min-w-0">
-            <HeaderSearch />
-          </div>
-
-          <ul className="hidden md:flex items-center gap-6 ml-2 text-sm text-muted-foreground">
-            <li><Link to="/?cat=gaming" className="hover:text-foreground flex items-center gap-2">{t("nav_gaming")}</Link></li>
-            <li><Link to="/?cat=software" className="hover:text-foreground flex items-center gap-2">{t("nav_software")}</Link></li>
-            <li><Link to="/?cat=subscriptions" className="hover:text-foreground flex items-center gap-2">{t("nav_subscriptions")}</Link></li>
-            <li><Link to="/?cat=giftcards" className="hover:text-foreground flex items-center gap-2">{t("nav_giftcards")}</Link></li>
-            <li><Link to="/?cat=bestsellers" className="hover:text-foreground flex items-center gap-2">{t("nav_bestsellers")}</Link></li>
-          </ul>
+          {/* Dynamic categories */}
+          <NavCategories />
         </div>
 
         <div className="flex items-center gap-3 md:gap-5">
