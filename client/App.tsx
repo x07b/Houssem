@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ProductPage from "./pages/Product";
 import Search from "./pages/Search";
+import CategoryPage from "./pages/Category";
 import Checkout from "./pages/Checkout";
 import { I18nProvider } from "@/context/I18nContext";
 import { CurrencyProvider } from "@/context/CurrencyContext";
@@ -30,27 +31,30 @@ const App = () => (
       <I18nProvider>
         <CurrencyProvider>
           <ProductsProvider>
-            <CartProvider>
-              <AdminAuthProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/product/:id" element={<ProductPage />} />
-                    <Route path="/search" element={<Search />} />
-                    <Route path="/checkout" element={<Checkout />} />
-                    <Route path="/order-success" element={<OrderSuccess />} />
-                    <Route path="/admin/login" element={<AdminLogin />} />
-                    <Route path="/admin" element={<Admin />} />
-                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </BrowserRouter>
-              </TooltipProvider>
-              </AdminAuthProvider>
-            </CartProvider>
+            <CategoriesProvider>
+              <CartProvider>
+                <AdminAuthProvider>
+                <TooltipProvider>
+                  <Toaster />
+                  <Sonner />
+                  <BrowserRouter>
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/product/:slug" element={<ProductPage />} />
+                      <Route path="/search" element={<Search />} />
+                      <Route path="/c/:slug" element={<CategoryPage />} />
+                      <Route path="/checkout" element={<Checkout />} />
+                      <Route path="/order-success" element={<OrderSuccess />} />
+                      <Route path="/admin/login" element={<AdminLogin />} />
+                      <Route path="/admin" element={<Admin />} />
+                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </BrowserRouter>
+                </TooltipProvider>
+                </AdminAuthProvider>
+              </CartProvider>
+            </CategoriesProvider>
           </ProductsProvider>
         </CurrencyProvider>
       </I18nProvider>
