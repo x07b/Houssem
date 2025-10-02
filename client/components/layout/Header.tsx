@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import { useThemeMode } from "@/context/ThemeContext";
 import HeaderSearch from "./HeaderSearch";
+import { useCategories } from "@/context/CategoriesContext";
 
 export default function Header() {
   const { t, lang, setLang } = useI18n();
