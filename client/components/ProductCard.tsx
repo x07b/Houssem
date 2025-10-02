@@ -28,7 +28,7 @@ export default function ProductCard({ product }: { product: AdminProduct }) {
       transition={{ duration: 0.3 }}
       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/90 shadow-sm transition-[box-shadow,border] hover:border-primary/40 hover:shadow-2xl"
     >
-      <Link to={`/product/${product.id}`} className="relative block overflow-hidden">
+      <Link to={`/product/${(product as any).slug || slugify(product.title || product.id)}`} className="relative block overflow-hidden">
         <img
           src={product.image}
           alt={product.title}
