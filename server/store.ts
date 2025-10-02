@@ -9,6 +9,7 @@ const defaultState: StoreState = {
   products: [],
   banners: [],
   promos: [],
+  categories: [],
   toggles: { showNewsletter: true, showPromo: true, showPremium: true },
   orders: [],
 };

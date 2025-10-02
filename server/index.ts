@@ -8,6 +8,7 @@ import { handleCheckout, getOrderByCode } from "./routes/checkout";
 import { validatePromo } from "./routes/promo";
 import { listPublicProducts, getPublicProduct } from "./routes/products";
 import { handleSuggest } from "./routes/suggest";
+import { listPublicCategories, listCategoryProducts, listAdminCategories, upsertCategory, deleteCategory } from "./routes/categories";
 
 export function createServer() {
   const app = express();
@@ -30,6 +31,13 @@ export function createServer() {
   app.get("/api/products", listPublicProducts);
   app.get("/api/products/:id", getPublicProduct);
   app.get("/api/suggest", handleSuggest);
+  app.get("/api/categories", listPublicCategories);
+  app.get("/api/categories/:slug/products", listCategoryProducts);
+
+  // Admin categories
+  app.get("/api/admin/categories", requireAuth, listAdminCategories);
+  app.post("/api/admin/categories", requireAuth, upsertCategory);
+  app.delete("/api/admin/categories/:id", requireAuth, deleteCategory);
 
   // Orders API
   app.get("/api/orders/:code", getOrderByCode);
