@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
-import { BadgePercent, Box, Gamepad2, Gift, Loader2, Search } from "lucide-react";
+import { createPortal } from "react-dom";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { BadgePercent, Box, Gamepad2, Gift, Loader2, Search, X } from "lucide-react";
 
 interface SuggestBase { id: string; title: string; }
 interface ProductItem extends SuggestBase { type: "product"; subtitle?: string; price?: number; currency?: string; icon: string }
@@ -93,6 +95,8 @@ export default function HeaderSearch() {
   const debounced = useDebounced(query, 200);
   const navigate = useNavigate();
   const abortRef = useRef<AbortController | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     abortRef.current?.abort();
@@ -126,6 +130,26 @@ export default function HeaderSearch() {
     }
     setOverlayOpen(false);
   };
+
+  // focus management + body lock
+  useEffect(() => {
+    if (overlayOpen) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      setTimeout(() => inputRef.current?.focus(), 0);
+      const onKey = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          setOverlayOpen(false);
+        }
+      };
+      window.addEventListener("keydown", onKey);
+      return () => {
+        document.body.style.overflow = prev;
+        window.removeEventListener("keydown", onKey);
+        triggerRef.current?.focus();
+      };
+    }
+  }, [overlayOpen]);
 
   const desktopList = (
     <div className="max-h-96 overflow-auto">
@@ -176,34 +200,19 @@ export default function HeaderSearch() {
 
   return (
     <>
-      {/* Desktop inline search */}
-      <div className="hidden lg:block">
-        <div className="relative w-[480px] focus-within:w-[640px] transition-all duration-200">
-          <Command className="rounded-full border bg-background text-foreground">
-            <div className="relative">
-              <CommandInput
-                placeholder="Search games, gift cards, software…"
-                value={query}
-                onValueChange={setQuery}
-                aria-expanded={results.length > 0}
-                aria-controls="search-desktop-list"
-                className="h-11 pl-10 rounded-full"
-              />
-              <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              {loading && (
-                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
-              )}
-            </div>
-            {(results.length > 0 || (!query && recent.length > 0)) && (
-              <div id="search-desktop-list" className="absolute left-0 right-0 top-full mt-2 z-50 rounded-md border bg-popover text-popover-foreground shadow-md overflow-hidden">
-                {desktopList}
-              </div>
-            )}
-          </Command>
-        </div>
-      </div>
+      {/* Desktop trigger: looks like input */}
+      <button
+        ref={triggerRef}
+        type="button"
+        className="hidden lg:flex items-center gap-2 rounded-full border bg-background text-sm text-muted-foreground px-4 h-11 w-[480px] hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-200"
+        onClick={() => setOverlayOpen(true)}
+        aria-label="Open search"
+      >
+        <Search className="h-4 w-4" />
+        <span className="truncate text-left">Search games, gift cards, software…</span>
+      </button>
 
-      {/* Mobile/Tablet icon + overlay */}
+      {/* Mobile/Tablet icon trigger */}
       <button
         className="lg:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border hover:bg-muted"
         aria-label="Search"
@@ -212,61 +221,164 @@ export default function HeaderSearch() {
         <Search className="h-4 w-4" />
       </button>
 
-      <CommandDialog open={overlayOpen} onOpenChange={setOverlayOpen}>
-        <Command className="h-[85vh]">
-          <div className="relative">
-            <CommandInput
-              placeholder="Search games, gift cards, software…"
-              value={query}
-              onValueChange={setQuery}
-              autoFocus
-            />
-            {loading && (
-              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
-            )}
+      {/* Mobile/Tablet sheet overlay */}
+      <Sheet open={overlayOpen && typeof window !== 'undefined' && window.innerWidth < 1024} onOpenChange={setOverlayOpen}>
+        <SheetContent side="top" className="p-0 h-screen">
+          <div className="border-b bg-background">
+            <div className="container px-4 md:px-8 h-16 flex items-center gap-2">
+              <div className="relative flex-1">
+                <Command>
+                  <div className="relative">
+                    <CommandInput
+                      ref={inputRef as any}
+                      placeholder="Search games, gift cards, software…"
+                      value={query}
+                      onValueChange={setQuery}
+                      role="combobox"
+                      aria-expanded={results.length > 0}
+                      aria-controls="search-mobile-list"
+                      className="h-11 pl-10"
+                    />
+                    <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    {loading && (
+                      <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
+                    )}
+                  </div>
+                </Command>
+              </div>
+              <button aria-label="Close search" className="inline-flex items-center justify-center w-9 h-9 rounded-full border hover:bg-muted" onClick={() => setOverlayOpen(false)}>
+                <X className="h-5 w-5" />
+              </button>
+            </div>
           </div>
-          <CommandList>
-            <CommandEmpty>No results. Try different keywords.</CommandEmpty>
-            {results.length > 0 && (
-              <>
-                <CommandGroup heading="Top matches">
-                  {results.filter((r) => r.type === "product").map((it) => (
-                    <CommandItem key={it.id} value={it.title} onSelect={() => onPick(it)}>
-                      {iconFor(it.icon)}
-                      <span className="truncate">{highlight(it.title, query)}</span>
-                      {"price" in it && it.price != null && (
-                        <span className="ml-auto text-muted-foreground">{it.currency || "USD"} {it.price.toFixed(2)}</span>
+          <div className="container px-4 md:px-8 py-2">
+            <Command>
+              <CommandList id="search-mobile-list" className="max-h-[60vh] overflow-auto">
+                <CommandEmpty>No results. Try different keywords.</CommandEmpty>
+                {results.length > 0 && (
+                  <>
+                    <CommandGroup heading="Top matches">
+                      {results.filter((r) => r.type === "product").map((it) => (
+                        <CommandItem key={it.id} value={it.title} onSelect={() => onPick(it)}>
+                          {iconFor(it.icon)}
+                          <span className="truncate">{highlight(it.title, query)}</span>
+                          {"price" in it && it.price != null && (
+                            <span className="ml-auto text-muted-foreground">{it.currency || "USD"} {it.price.toFixed(2)}</span>
+                          )}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                    <CommandSeparator />
+                    <CommandGroup heading="Categories & Platforms">
+                      {results.filter((r) => r.type !== "product").map((it) => (
+                        <CommandItem key={it.id} value={it.title} onSelect={() => onPick(it)}>
+                          {iconFor((it as any).icon)}
+                          <span className="truncate">{highlight(it.title, query)}</span>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </>
+                )}
+                {!query && recent.length > 0 && (
+                  <>
+                    <CommandSeparator />
+                    <CommandGroup heading="Recent searches">
+                      {recent.map((r, i) => (
+                        <CommandItem key={i} value={r} onSelect={() => onPick(null, r)}>
+                          <Search className="mr-2 h-4 w-4" />
+                          <span className="truncate">{r}</span>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </>
+                )}
+              </CommandList>
+            </Command>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Desktop anchored overlay with backdrop */}
+      {overlayOpen && typeof window !== 'undefined' && window.innerWidth >= 1024 && createPortal(
+        <div className="fixed inset-0 z-50">
+          <div className="absolute inset-0 bg-black/60 data-[state=open]:animate-in data-[state=open]:fade-in-0" onClick={() => setOverlayOpen(false)} />
+          <div className="absolute inset-x-0 top-16">
+            <div className="mx-auto container px-4 md:px-8">
+              <div className="rounded-b-md border bg-background shadow-lg data-[state=open]:animate-in data-[state=open]:slide-in-from-top-2 data-[state=open]:fade-in-0">
+                <div className="h-16 flex items-center gap-2 px-3 md:px-4 border-b">
+                  <div className="relative flex-1">
+                    <Command>
+                      <div className="relative">
+                        <CommandInput
+                          ref={inputRef as any}
+                          placeholder="Search games, gift cards, software…"
+                          value={query}
+                          onValueChange={setQuery}
+                          role="combobox"
+                          aria-expanded={results.length > 0}
+                          aria-controls="search-desktop-overlay-list"
+                          className="h-11 pl-10"
+                        />
+                        <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        {loading && (
+                          <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
+                        )}
+                      </div>
+                    </Command>
+                  </div>
+                  <button aria-label="Close search" className="inline-flex items-center justify-center w-9 h-9 rounded-full border hover:bg-muted" onClick={() => setOverlayOpen(false)}>
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+                <div className="max-h-[60vh] overflow-auto">
+                  <Command>
+                    <CommandList id="search-desktop-overlay-list">
+                      <CommandEmpty>No results. Try different keywords.</CommandEmpty>
+                      {results.length > 0 && (
+                        <>
+                          <CommandGroup heading="Top matches">
+                            {results.filter((r) => r.type === "product").map((it) => (
+                              <CommandItem key={it.id} value={it.title} onSelect={() => onPick(it)}>
+                                {iconFor(it.icon)}
+                                <span className="truncate">{highlight(it.title, query)}</span>
+                                {"price" in it && it.price != null && (
+                                  <span className="ml-auto text-muted-foreground">{it.currency || "USD"} {it.price.toFixed(2)}</span>
+                                )}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                          <CommandSeparator />
+                          <CommandGroup heading="Categories & Platforms">
+                            {results.filter((r) => r.type !== "product").map((it) => (
+                              <CommandItem key={it.id} value={it.title} onSelect={() => onPick(it)}>
+                                {iconFor((it as any).icon)}
+                                <span className="truncate">{highlight(it.title, query)}</span>
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </>
                       )}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-                <CommandSeparator />
-                <CommandGroup heading="Categories & Platforms">
-                  {results.filter((r) => r.type !== "product").map((it) => (
-                    <CommandItem key={it.id} value={it.title} onSelect={() => onPick(it)}>
-                      {iconFor((it as any).icon)}
-                      <span className="truncate">{highlight(it.title, query)}</span>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </>
-            )}
-            {!query && recent.length > 0 && (
-              <>
-                <CommandSeparator />
-                <CommandGroup heading="Recent searches">
-                  {recent.map((r, i) => (
-                    <CommandItem key={i} value={r} onSelect={() => onPick(null, r)}>
-                      <Search className="mr-2 h-4 w-4" />
-                      <span className="truncate">{r}</span>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </>
-            )}
-          </CommandList>
-        </Command>
-      </CommandDialog>
+                      {!query && recent.length > 0 && (
+                        <>
+                          <CommandSeparator />
+                          <CommandGroup heading="Recent searches">
+                            {recent.map((r, i) => (
+                              <CommandItem key={i} value={r} onSelect={() => onPick(null, r)}>
+                                <Search className="mr-2 h-4 w-4" />
+                                <span className="truncate">{r}</span>
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </>
+                      )}
+                    </CommandList>
+                  </Command>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>, document.body)
+      }
     </>
   );
 }
