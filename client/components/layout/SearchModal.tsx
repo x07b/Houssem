@@ -8,7 +8,7 @@ import { useProducts } from "@/context/ProductsContext";
 import { useI18n } from "@/context/I18nContext";
 import { useCurrency } from "@/context/CurrencyContext";
 import { Link } from "react-router-dom";
-import { Check, Loader2, Search, X, MoreHorizontal, ShoppingCart } from "lucide-react";
+import { Loader2, Search, X, MoreHorizontal, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SearchModalProps {
