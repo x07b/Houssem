@@ -222,6 +222,8 @@ export default function Header() {
 
       <CommandDialog
         open={isSearchOpen}
+        title={t("nav_search") || "Search products"}
+        description={t("nav_search_hint") || "Start typing to see suggestions"}
         onOpenChange={(open) => {
           setSearchOpen(open);
           if (!open) {
