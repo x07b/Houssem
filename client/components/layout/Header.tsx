@@ -47,7 +47,7 @@ export default function Header() {
   const [isLangOpenMobile, setIsLangOpenMobile] = useState(false);
 
   // Global shortcuts: Cmd/Ctrl+K and '/'
-  useMemo(() => {
+  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const isModK = (e.key.toLowerCase() === 'k') && (e.metaKey || e.ctrlKey);
       const isSlash = e.key === '/';
