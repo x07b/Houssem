@@ -11,11 +11,6 @@ const TRANSLATIONS: Dict = {
   cart: { en: "Cart", fr: "Panier", ar: "السلة" },
   close: { en: "Close", fr: "Fermer", ar: "إغلاق" },
   add_to_cart: { en: "Add to Cart", fr: "Ajouter au panier", ar: "أضف إلى السلة" },
-  search: {
-    en: "Search",
-    fr: "Rechercher",
-    ar: "بحث",
-  } as any,
   "search.placeholder": { en: "Search products, keys, gift cards…", fr: "Rechercher produits, clés, cartes cadeaux…", ar: "ابحث عن المنتجات والمفاتيح وبطاقات الهدايا…" },
   "search.popular": { en: "Popular now", fr: "Populaire maintenant", ar: "شائع الآن" },
   "search.recent": { en: "Recent searches", fr: "Recherches récentes", ar: "عمليات البحث الأخيرة" },
