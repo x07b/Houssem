@@ -83,7 +83,7 @@ export default function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="w-full max-w-xs p-0 sm:max-w-sm">
               <div className="flex h-full flex-col">
-                <div className="px-6 pt-6 pb-4">
+                <div className="flex items-center justify-between gap-3 px-6 pt-6 pb-4">
                   <SheetClose asChild>
                     <Link to="/" className="flex items-center gap-2">
                       <img
@@ -97,6 +97,24 @@ export default function Header() {
                       />
                     </Link>
                   </SheetClose>
+                  <div className="flex items-center gap-2">
+                    <SheetClose asChild>
+                      <button
+                        onClick={() => setSearchOpen(true)}
+                        className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-foreground text-background hover:bg-foreground/90"
+                        aria-label={t("nav_search") || "Search"}
+                      >
+                        <Search className="h-4 w-4" />
+                      </button>
+                    </SheetClose>
+                    <button
+                      onClick={setArabic}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground hover:bg-muted"
+                      aria-label={t("nav_language") || "Change language"}
+                    >
+                      <Languages className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
                 <nav className="flex-1 overflow-y-auto px-6 pb-6">
                   <ul className="space-y-2 text-sm text-foreground">
