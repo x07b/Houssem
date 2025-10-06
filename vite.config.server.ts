@@ -32,10 +32,11 @@ export default defineConfig({
         // External dependencies that should not be bundled
         "express",
         "cors",
+        "nodemailer",
       ],
       output: {
         format: "es",
-        entryFileNames: "[name].mjs",
+        entryFileNames: "node-build.mjs",
       },
     },
     minify: false, // Keep readable for debugging
