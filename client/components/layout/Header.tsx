@@ -41,7 +41,6 @@ export default function Header() {
   const { products } = useProducts();
 
   const [isSearchOpen, setSearchOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
 
   const [isLangOpenDesktop, setIsLangOpenDesktop] = useState(false);
   const [isLangOpenMobile, setIsLangOpenMobile] = useState(false);
@@ -68,22 +67,6 @@ export default function Header() {
     { to: "/?cat=bestsellers", label: t("nav_bestsellers") },
   ];
 
-  const suggestions = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase();
-    const source = term
-      ? products.filter((product) =>
-          product.title.toLowerCase().includes(term) ||
-          product.description?.toLowerCase().includes(term),
-        )
-      : products;
-    return source.slice(0, 8);
-  }, [products, searchTerm]);
-
-  const handleNavigate = (id: string) => {
-    setSearchOpen(false);
-    setSearchTerm("");
-    navigate(`/product/${id}`);
-  };
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
