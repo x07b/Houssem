@@ -4,7 +4,6 @@ import { useI18n } from "@/context/I18nContext";
 import { useCurrency, Currency } from "@/context/CurrencyContext";
 import { useCart } from "@/context/CartContext";
 import { useThemeMode } from "@/context/ThemeContext";
-import { useProducts } from "@/context/ProductsContext";
 import SearchModal from "./SearchModal";
 import {
   Sheet,
@@ -22,7 +21,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Button } from "@/components/ui/button";
 import {
   ShoppingCart,
-  Globe,
   Coins,
   Moon,
   Sun,
@@ -34,11 +32,10 @@ import {
 
 export default function Header() {
   const { t, lang, setLang } = useI18n();
-  const { currency, setCurrency, format } = useCurrency();
+  const { currency, setCurrency } = useCurrency();
   const { items } = useCart();
   const navigate = useNavigate();
   const { theme, toggle } = useThemeMode();
-  const { products } = useProducts();
 
   const [isSearchOpen, setSearchOpen] = useState(false);
 
