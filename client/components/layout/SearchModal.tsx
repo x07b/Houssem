@@ -42,7 +42,6 @@ function useMediaQuery(query: string) {
 }
 
 export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
   const { t } = useI18n();
   // Only one of Dialog/Sheet is visible via CSS; state shared
   return (
