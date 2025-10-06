@@ -361,59 +361,7 @@ export default function Header() {
         </div>
       </div>
 
-      <CommandDialog
-        open={isSearchOpen}
-        title={t("nav_search") || "Search products"}
-        description={t("nav_search_hint") || "Start typing to see suggestions"}
-        onOpenChange={(open) => {
-          setSearchOpen(open);
-          if (!open) {
-            setSearchTerm("");
-          }
-        }}
-      >
-        <div className="border-b bg-background/80 px-4 py-3 text-sm font-semibold text-foreground">
-          {t("nav_search") || "Search products"}
-        </div>
-        <CommandInput
-          value={searchTerm}
-          onValueChange={setSearchTerm}
-          placeholder={t("nav_search_placeholder") || "Search the catalog"}
-        />
-        <CommandList>
-          <CommandEmpty>
-            {searchTerm.trim() ? t("nav_search_empty") || "No products found" : t("nav_search_hint") || "Start typing to see suggestions"}
-          </CommandEmpty>
-          <CommandGroup heading={searchTerm.trim() ? t("nav_search_results") || "Results" : t("nav_search_popular") || "Suggestions"}>
-            {suggestions.map((product) => (
-              <CommandItem
-                key={product.id}
-                value={product.title}
-                className="flex items-center gap-3"
-                onSelect={() => handleNavigate(product.id)}
-              >
-                {product.image ? (
-                  <img
-                    src={product.image}
-                    alt={product.title}
-                    className="h-10 w-10 flex-shrink-0 rounded-md object-cover"
-                  />
-                ) : (
-                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-muted text-sm font-semibold text-foreground">
-                    {product.title.slice(0, 2).toUpperCase()}
-                  </div>
-                )}
-                <div className="flex flex-1 flex-col">
-                  <span className="text-sm font-medium text-foreground">{product.title}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {format(product.price?.USD ?? 0)}
-                  </span>
-                </div>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
+      <SearchModal open={isSearchOpen} onOpenChange={(open)=> setSearchOpen(open)} />
     </header>
   );
 }
