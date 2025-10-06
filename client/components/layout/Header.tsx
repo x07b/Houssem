@@ -27,6 +27,7 @@ import {
   Sun,
   Menu,
   Search,
+  Languages,
 } from "lucide-react";
 
 export default function Header() {
