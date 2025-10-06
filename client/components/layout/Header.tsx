@@ -41,6 +41,8 @@ export default function Header() {
   const [isSearchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const setArabic = () => setLang("ar");
+
   const navLinks = [
     { to: "/?cat=gaming", label: t("nav_gaming") },
     { to: "/?cat=software", label: t("nav_software") },
