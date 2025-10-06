@@ -43,12 +43,14 @@ function useMediaQuery(query: string) {
 
 export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const { t } = useI18n();
   // Only one of Dialog/Sheet is visible via CSS; state shared
   return (
     <>
       <div className="hidden md:block">
         <Dialog open={open} onOpenChange={onOpenChange}>
           <DialogContent className="p-0 w-[min(92vw,720px)] overflow-hidden border shadow-xl rounded-2xl">
+            <DialogTitle className="sr-only">{t("nav_search")}</DialogTitle>
             <SearchContent onClose={() => onOpenChange(false)} />
           </DialogContent>
         </Dialog>
@@ -56,6 +58,7 @@ export default function SearchModal({ open, onOpenChange }: SearchModalProps) {
       <div className="md:hidden">
         <Sheet open={open} onOpenChange={onOpenChange}>
           <SheetContent side="bottom" className="p-0 w-screen h-[100svh] rounded-t-2xl overflow-hidden">
+            <SheetTitle className="sr-only">{t("nav_search")}</SheetTitle>
             <SearchContent onClose={() => onOpenChange(false)} />
           </SheetContent>
         </Sheet>
