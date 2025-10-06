@@ -5,14 +5,7 @@ import { useCurrency, Currency } from "@/context/CurrencyContext";
 import { useCart } from "@/context/CartContext";
 import { useThemeMode } from "@/context/ThemeContext";
 import { useProducts } from "@/context/ProductsContext";
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+import SearchModal from "./SearchModal";
 import {
   Sheet,
   SheetTrigger,
