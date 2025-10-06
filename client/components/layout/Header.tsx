@@ -26,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 import {
   ShoppingCart,
   Globe,
@@ -106,30 +107,41 @@ export default function Header() {
                       />
                     </Link>
                   </SheetClose>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <SheetClose asChild>
-                      <button
-                        onClick={() => setSearchOpen(true)}
-                        className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-foreground text-background hover:bg-foreground/90"
-                        aria-label={t("nav_search") || "Search"}
-                      >
-                        <Search className="h-4 w-4" />
-                      </button>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-11 w-11 rounded-full [&_svg]:size-5"
+                              aria-label={t("nav_search") || "Search"}
+                              onClick={() => setSearchOpen(true)}
+                            >
+                              <Search />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent sideOffset={6}>Search</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </SheetClose>
+
                     <TooltipProvider>
                       <Tooltip>
                         <DropdownMenu open={isLangOpenMobile} onOpenChange={setIsLangOpenMobile}>
                           <TooltipTrigger asChild>
                             <DropdownMenuTrigger asChild>
-                              <button
-                                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground hover:bg-muted"
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-11 w-11 rounded-full [&_svg]:size-5"
                                 aria-label="Language"
                                 aria-haspopup="menu"
                                 aria-expanded={isLangOpenMobile}
-                                title="Language"
                               >
-                                <Languages className="h-4 w-4" />
-                              </button>
+                                <Languages />
+                              </Button>
                             </DropdownMenuTrigger>
                           </TooltipTrigger>
                           <TooltipContent sideOffset={6}>Language</TooltipContent>
@@ -232,28 +244,39 @@ export default function Header() {
           </ul>
         </div>
 
-        <div className="flex items-center gap-2 md:gap-4">
-          <button
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-foreground text-background hover:bg-foreground/90"
-            aria-label="Open search"
-            onClick={() => setSearchOpen(true)}
-          >
-            <Search className="h-4 w-4" />
-          </button>
+        <div className="flex items-center gap-3 md:gap-4">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-11 w-11 rounded-full [&_svg]:size-5"
+                  aria-label="Search"
+                  onClick={() => setSearchOpen(true)}
+                >
+                  <Search />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent sideOffset={6}>Search</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
           <TooltipProvider>
             <Tooltip>
               <DropdownMenu open={isLangOpenDesktop} onOpenChange={setIsLangOpenDesktop}>
                 <TooltipTrigger asChild>
                   <DropdownMenuTrigger asChild>
-                    <button
-                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border hover:bg-muted"
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-11 w-11 rounded-full [&_svg]:size-5"
                       aria-label="Language"
                       aria-haspopup="menu"
                       aria-expanded={isLangOpenDesktop}
-                      title="Language"
                     >
-                      <Languages className="h-4 w-4" />
-                    </button>
+                      <Languages />
+                    </Button>
                   </DropdownMenuTrigger>
                 </TooltipTrigger>
                 <TooltipContent sideOffset={6}>Language</TooltipContent>
@@ -289,26 +312,45 @@ export default function Header() {
               </DropdownMenu>
             </Tooltip>
           </TooltipProvider>
-          <button
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border hover:bg-muted"
-            aria-label="Toggle theme"
-            onClick={() => toggle()}
-            title="Toggle theme"
-          >
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </button>
-          <button
-            onClick={() => navigate("/checkout")}
-            className="relative inline-flex items-center"
-            aria-label="View cart"
-          >
-            <ShoppingCart className="h-6 w-6 text-foreground" />
-            {items.length > 0 && (
-              <span className="absolute -right-2 -top-2 rounded-full bg-primary px-1.5 py-0.5 text-xs text-primary-foreground">
-                {items.length}
-              </span>
-            )}
-          </button>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-11 w-11 rounded-full [&_svg]:size-5"
+                  aria-label="Theme"
+                  onClick={() => toggle()}
+                >
+                  {theme === "dark" ? <Sun /> : <Moon />}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent sideOffset={6}>Theme</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="relative h-11 w-11 rounded-full [&_svg]:size-5"
+                  aria-label="Cart"
+                  onClick={() => navigate("/checkout")}
+                >
+                  <ShoppingCart />
+                  {items.length > 0 && (
+                    <span className="absolute -right-2 -top-2 rounded-full bg-primary px-1.5 py-0.5 text-xs text-primary-foreground">
+                      {items.length}
+                    </span>
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent sideOffset={6}>Cart</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
 
