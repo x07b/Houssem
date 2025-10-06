@@ -20,6 +20,13 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
   ShoppingCart,
   Globe,
   Coins,
@@ -28,6 +35,7 @@ import {
   Menu,
   Search,
   Languages,
+  Check,
 } from "lucide-react";
 
 export default function Header() {
@@ -41,7 +49,8 @@ export default function Header() {
   const [isSearchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const setArabic = () => setLang("ar");
+  const [isLangOpenDesktop, setIsLangOpenDesktop] = useState(false);
+  const [isLangOpenMobile, setIsLangOpenMobile] = useState(false);
 
   const navLinks = [
     { to: "/?cat=gaming", label: t("nav_gaming") },
@@ -107,13 +116,55 @@ export default function Header() {
                         <Search className="h-4 w-4" />
                       </button>
                     </SheetClose>
-                    <button
-                      onClick={setArabic}
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground hover:bg-muted"
-                      aria-label={t("nav_language") || "Change language"}
-                    >
-                      <Languages className="h-4 w-4" />
-                    </button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <DropdownMenu open={isLangOpenMobile} onOpenChange={setIsLangOpenMobile}>
+                          <TooltipTrigger asChild>
+                            <DropdownMenuTrigger asChild>
+                              <button
+                                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground hover:bg-muted"
+                                aria-label="Language"
+                                aria-haspopup="menu"
+                                aria-expanded={isLangOpenMobile}
+                                title="Language"
+                              >
+                                <Languages className="h-4 w-4" />
+                              </button>
+                            </DropdownMenuTrigger>
+                          </TooltipTrigger>
+                          <TooltipContent sideOffset={6}>Language</TooltipContent>
+                          <DropdownMenuContent sideOffset={8} align="end" className="w-56 p-1">
+                            <DropdownMenuItem
+                              role="menuitem"
+                              className="flex h-11 items-center justify-between rounded-md px-3"
+                              onSelect={() => setLang("en")}
+                              aria-current={lang === "en"}
+                            >
+                              English
+                              {lang === "en" && <Check className="h-4 w-4" />}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              role="menuitem"
+                              className="flex h-11 items-center justify-between rounded-md px-3"
+                              onSelect={() => setLang("fr")}
+                              aria-current={lang === "fr"}
+                            >
+                              French
+                              {lang === "fr" && <Check className="h-4 w-4" />}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              role="menuitem"
+                              className="flex h-11 items-center justify-between rounded-md px-3"
+                              onSelect={() => setLang("ar")}
+                              aria-current={lang === "ar"}
+                            >
+                              Arabic
+                              {lang === "ar" && <Check className="h-4 w-4" />}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
                 <nav className="flex-1 overflow-y-auto px-6 pb-6">
@@ -148,22 +199,6 @@ export default function Header() {
                       <option value="TND">TND</option>
                       <option value="EGP">EGP</option>
                       <option value="EUR">EUR</option>
-                    </select>
-                  </div>
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Globe className="h-4 w-4" />
-                      <span>{t("nav_language")}</span>
-                    </div>
-                    <select
-                      className="bg-transparent text-foreground outline-none"
-                      value={lang}
-                      onChange={(e) => setLang(e.target.value as any)}
-                      aria-label={t("nav_language")}
-                    >
-                      <option value="en">English</option>
-                      <option value="fr">Français</option>
-                      <option value="ar">العربية</option>
                     </select>
                   </div>
                 </div>
@@ -205,14 +240,55 @@ export default function Header() {
           >
             <Search className="h-4 w-4" />
           </button>
-          <button
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border hover:bg-muted"
-            aria-label="Switch to Arabic"
-            onClick={setArabic}
-            title="Switch to Arabic"
-          >
-            <Languages className="h-4 w-4" />
-          </button>
+          <TooltipProvider>
+            <Tooltip>
+              <DropdownMenu open={isLangOpenDesktop} onOpenChange={setIsLangOpenDesktop}>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border hover:bg-muted"
+                      aria-label="Language"
+                      aria-haspopup="menu"
+                      aria-expanded={isLangOpenDesktop}
+                      title="Language"
+                    >
+                      <Languages className="h-4 w-4" />
+                    </button>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent sideOffset={6}>Language</TooltipContent>
+                <DropdownMenuContent sideOffset={8} align="end" className="w-56 p-1">
+                  <DropdownMenuItem
+                    role="menuitem"
+                    className="flex h-11 items-center justify-between rounded-md px-3"
+                    onSelect={() => setLang("en")}
+                    aria-current={lang === "en"}
+                  >
+                    English
+                    {lang === "en" && <Check className="h-4 w-4" />}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    role="menuitem"
+                    className="flex h-11 items-center justify-between rounded-md px-3"
+                    onSelect={() => setLang("fr")}
+                    aria-current={lang === "fr"}
+                  >
+                    French
+                    {lang === "fr" && <Check className="h-4 w-4" />}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    role="menuitem"
+                    className="flex h-11 items-center justify-between rounded-md px-3"
+                    onSelect={() => setLang("ar")}
+                    aria-current={lang === "ar"}
+                  >
+                    Arabic
+                    {lang === "ar" && <Check className="h-4 w-4" />}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </Tooltip>
+          </TooltipProvider>
           <button
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border hover:bg-muted"
             aria-label="Toggle theme"
@@ -221,19 +297,6 @@ export default function Header() {
           >
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
-          <div className="hidden items-center gap-2 text-sm text-muted-foreground md:flex">
-            <Globe className="h-4 w-4" />
-            <select
-              className="bg-transparent outline-none"
-              value={lang}
-              onChange={(e) => setLang(e.target.value as any)}
-              aria-label={t("nav_language")}
-            >
-              <option value="en">English</option>
-              <option value="fr">Français</option>
-              <option value="ar">العربية</option>
-            </select>
-          </div>
           <button
             onClick={() => navigate("/checkout")}
             className="relative inline-flex items-center"
