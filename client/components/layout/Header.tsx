@@ -199,11 +199,19 @@ export default function Header() {
 
         <div className="flex items-center gap-2 md:gap-4">
           <button
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border hover:bg-muted"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-foreground text-background hover:bg-foreground/90"
             aria-label="Open search"
             onClick={() => setSearchOpen(true)}
           >
             <Search className="h-4 w-4" />
+          </button>
+          <button
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border hover:bg-muted"
+            aria-label="Switch to Arabic"
+            onClick={setArabic}
+            title="Switch to Arabic"
+          >
+            <Languages className="h-4 w-4" />
           </button>
           <button
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border hover:bg-muted"
