@@ -46,6 +46,20 @@ export default function Header() {
   const [isLangOpenDesktop, setIsLangOpenDesktop] = useState(false);
   const [isLangOpenMobile, setIsLangOpenMobile] = useState(false);
 
+  // Global shortcuts: Cmd/Ctrl+K and '/'
+  useMemo(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const isModK = (e.key.toLowerCase() === 'k') && (e.metaKey || e.ctrlKey);
+      const isSlash = e.key === '/';
+      if (isModK || isSlash) {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   const navLinks = [
     { to: "/?cat=gaming", label: t("nav_gaming") },
     { to: "/?cat=software", label: t("nav_software") },
