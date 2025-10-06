@@ -8,6 +8,8 @@ const TRANSLATIONS: Dict = {
   nav_categories: { en: "Categories", fr: "Catégories", ar: "الفئات" },
   nav_currency: { en: "Currency", fr: "Devise", ar: "العملة" },
   nav_language: { en: "Language", fr: "Langue", ar: "اللغة" },
+  nav_search: { en: "Search", fr: "Rechercher", ar: "بحث" },
+  nav_theme: { en: "Theme", fr: "Thème", ar: "السمة" },
   cart: { en: "Cart", fr: "Panier", ar: "السلة" },
   close: { en: "Close", fr: "Fermer", ar: "إغلاق" },
   add_to_cart: { en: "Add to Cart", fr: "Ajouter au panier", ar: "أضف إلى السلة" },
