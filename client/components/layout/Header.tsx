@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useI18n } from "@/context/I18nContext";
 import { useCurrency, Currency } from "@/context/CurrencyContext";
