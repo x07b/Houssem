@@ -80,6 +80,7 @@ export default function Admin() {
           </div>
         )}
         {section === "products" && <ProductsManager token={token} />}
+        {section === "categories" && <CategoriesManager />}
         {section === "banners" && <BannersManager token={token} />}
         {section === "promos" && <PromosManager token={token} />}
         {section === "settings" && <SettingsPane token={token} />}
