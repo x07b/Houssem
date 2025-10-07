@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { AdminProduct, ProductVariant } from "@shared/entities";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   initial?: Partial<AdminProduct>;
@@ -17,6 +17,8 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
   const [price, setPrice] = useState(initial?.price || { ...emptyPrice });
   const [discountPercent, setDiscountPercent] = useState<number>(initial?.discountPercent || 0);
   const [variants, setVariants] = useState<ProductVariant[]>(initial?.variants || []);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [categoryId, setCategoryId] = useState<string>(String((initial as any)?.categoryId || ""));
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -42,8 +44,12 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
     setVariants((v)=> v.filter((_, i)=> i!==idx));
   }
 
+  useEffect(() => { fetch("/api/categories").then(r=>r.json()).then((list)=>setCategories(list)).catch(()=>setCategories([])); }, []);
+
   function submit() {
-    onSave({ title, description, image, price, discountPercent, variants });
+    const payload: any = { title, description, image, price, discountPercent, variants };
+    if (categoryId) payload.categoryId = categoryId; // N/A => no categoryId
+    onSave(payload);
   }
 
   return (
@@ -80,6 +86,14 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
       <div className="grid gap-2">
         <label className="text-sm font-medium">Discount %</label>
         <input type="number" className="rounded border px-3 py-2 bg-background w-32" value={discountPercent} onChange={(e)=>setDiscountPercent(Number(e.target.value))} />
+      </div>
+
+      <div className="grid gap-2">
+        <label className="text-sm font-medium">Category</label>
+        <select className="rounded border px-3 py-2 bg-background w-full" value={categoryId} onChange={(e)=>setCategoryId(e.target.value)}>
+          <option value="">N/A (All)</option>
+          {categories.map(c=> (<option key={c.id} value={c.id}>{c.name}</option>))}
+        </select>
       </div>
 
       <div className="grid gap-2">
