@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ProductPage from "./pages/Product";
 import Checkout from "./pages/Checkout";
+import CategoryPage from "./pages/Category";
 import { I18nProvider } from "@/context/I18nContext";
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { CartProvider } from "@/context/CartContext";
