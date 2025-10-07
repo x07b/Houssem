@@ -7,6 +7,7 @@ import { adminLogin, requireAuth, listProducts, createProduct, updateProduct, de
 import { handleCheckout, getOrderByCode } from "./routes/checkout";
 import { validatePromo } from "./routes/promo";
 import { listPublicProducts, getPublicProduct } from "./routes/products";
+import { listCategories, createCategory, deleteCategory } from "./routes/categories";
 
 export function createServer() {
   const app = express();
@@ -28,6 +29,11 @@ export function createServer() {
   app.get("/api/promo/:code", validatePromo);
   app.get("/api/products", listPublicProducts);
   app.get("/api/products/:id", getPublicProduct);
+
+  // Categories API
+  app.get("/api/categories", listCategories);
+  app.post("/api/categories", createCategory);
+  app.delete("/api/categories/:id", deleteCategory);
 
   // Orders API
   app.get("/api/orders/:code", getOrderByCode);
