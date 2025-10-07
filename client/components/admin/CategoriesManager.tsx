@@ -26,6 +26,7 @@ export default function CategoriesManager() {
     toast.success("Category created");
     setName("");
     await fetchList();
+    window.dispatchEvent(new Event("categories:updated"));
   }
 
   async function remove(id: string) {
@@ -33,6 +34,7 @@ export default function CategoriesManager() {
     if (!r.ok) { toast.error("Cannot delete category in use"); return; }
     toast.success("Category deleted");
     await fetchList();
+    window.dispatchEvent(new Event("categories:updated"));
   }
 
   return (
