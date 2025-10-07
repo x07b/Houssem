@@ -15,6 +15,7 @@ export default function Admin() {
   const navigate = useNavigate();
   const [section, setSection] = useState<AdminSection>("dashboard");
   const [orders, setOrders] = useState<any[]>([]);
+  const [selected, setSelected] = useState<any | null>(null);
 
   useEffect(() => {
     if (!token) navigate("/admin/login");
