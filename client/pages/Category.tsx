@@ -15,12 +15,22 @@ export default function CategoryPage() {
     let mounted = true;
     async function run() {
       setLoading(true);
-      const cats: Category[] = await fetch("/api/categories").then(r=>r.json());
+      const cats: Category[] = await fetch("/api/categories", { cache: "no-store" }).then(r=>r.json());
       const cat = cats.find(c=>c.slug===slug) || null;
       if (mounted) setCategory(cat);
-      const prods = await fetch(`/api/products?category=${encodeURIComponent(slug || "")}`).then(r=>r.json());
+      const prods = await fetch(`/api/products?category=${encodeURIComponent(slug || "")}`, { cache: "no-store" }).then(r=>r.json());
       if (mounted) setProducts(prods);
       setLoading(false);
+      if (cat) {
+        document.title = `${cat.name} – Store`;
+        let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+        if (!link) {
+          link = document.createElement('link');
+          link.setAttribute('rel','canonical');
+          document.head.appendChild(link);
+        }
+        link.href = `${window.location.origin}/category/${cat.slug}`;
+      }
     }
     run();
     return () => { mounted = false; };
@@ -32,7 +42,15 @@ export default function CategoryPage() {
       {loading ? (
         <p className="mt-4 text-sm text-muted-foreground">Loading…</p>
       ) : products.length === 0 ? (
-        <p className="mt-4 text-sm text-muted-foreground">No products yet in this category.</p>
+        <div className="mt-6 flex items-center justify-center">
+          <div className="w-full max-w-md rounded-2xl border bg-card p-6 text-center shadow-sm">
+            <h2 className="text-lg font-semibold">No products yet</h2>
+            <p className="mt-1 text-sm text-muted-foreground">We’re adding items to {category?.name ?? slug} soon.</p>
+            <div className="mt-4">
+              <a href="/" className="underline">Back to Home</a>
+            </div>
+          </div>
+        </div>
       ) : (
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((p) => (
