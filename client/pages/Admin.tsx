@@ -44,9 +44,15 @@ export default function Admin() {
               ) : (
                 <ul className="mt-2 divide-y">
                   {orders.slice().reverse().slice(0, 10).map((o) => (
-                    <li key={o.code} className="py-2 text-sm flex items-center justify-between">
-                      <span className="font-mono">{o.code}</span>
-                      <span>{new Date(o.createdAt).toLocaleString()}</span>
+                    <li key={o.code} className="py-3 text-sm flex items-center justify-between hover:bg-accent/40 rounded-lg px-2 cursor-pointer" onClick={()=>setSelected(o)}>
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="font-semibold truncate">{o?.customer?.name || "Guest"}</span>
+                        <span className="font-mono text-xs text-muted-foreground">{o.code}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs text-muted-foreground hidden sm:inline">{new Date(o.createdAt).toLocaleString()}</span>
+                        <span className="rounded-full bg-primary/10 text-primary px-2 py-0.5 text-xs font-semibold">{o.items?.length || 0}</span>
+                      </div>
                     </li>
                   ))}
                 </ul>
