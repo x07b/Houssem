@@ -5,7 +5,13 @@ interface Category { id: string; name: string; slug: string }
 
 export default function CategoryBar() {
   const [cats, setCats] = useState<Category[]>([]);
-  useEffect(() => { fetch("/api/categories").then(r=>r.json()).then(setCats).catch(()=>setCats([])); }, []);
+  useEffect(() => {
+    function load(){ fetch("/api/categories").then(r=>r.json()).then(setCats).catch(()=>setCats([])); }
+    load();
+    const handler = () => load();
+    window.addEventListener("categories:updated", handler as any);
+    return () => window.removeEventListener("categories:updated", handler as any);
+  }, []);
   return (
     <nav className="bg-black text-white">
       <div className="container px-4 md:px-8">
