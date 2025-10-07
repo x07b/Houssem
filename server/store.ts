@@ -5,10 +5,11 @@ import { StoreState } from "@shared/entities";
 const DATA_PATH = path.join(process.cwd(), "server", "data");
 const FILE = path.join(DATA_PATH, "store.json");
 
-const defaultState: StoreState = {
+const defaultState: any = {
   products: [],
   banners: [],
   promos: [],
+  categories: [],
   toggles: { showNewsletter: true, showPromo: true, showPremium: true },
   orders: [],
 };
