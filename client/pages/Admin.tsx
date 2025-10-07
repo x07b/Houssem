@@ -5,6 +5,7 @@ import BannersManager from "@/components/admin/BannersManager";
 import PromosManager from "@/components/admin/PromosManager";
 import SettingsPane from "@/components/admin/SettingsPane";
 import OrderLookup from "@/components/admin/OrderLookup";
+import CategoriesManager from "@/components/admin/CategoriesManager";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
