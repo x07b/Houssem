@@ -12,7 +12,8 @@
         "EGP": 0
       },
       "discountPercent": 0,
-      "variants": []
+      "variants": [],
+      "categoryId": "099d5dc9-5414-48a3-9cec-04c3f6022427"
     }
   ],
   "banners": [],
@@ -47,6 +48,13 @@
         }
       ],
       "status": "pending"
+    }
+  ],
+  "categories": [
+    {
+      "id": "099d5dc9-5414-48a3-9cec-04c3f6022427",
+      "name": "New Cat",
+      "slug": "new-cat"
     }
   ]
 }

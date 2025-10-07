@@ -1,26 +1,25 @@
-import { useI18n } from "@/context/I18nContext";
-import { Gamepad2, Gift, Crown, Trophy, SquareGanttChart } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-const items = [
-  { key: "nav_gaming" as const, icon: Gamepad2, href: "/?cat=gaming" },
-  { key: "nav_software" as const, icon: SquareGanttChart, href: "/?cat=software" },
-  { key: "nav_subscriptions" as const, icon: Crown, href: "/?cat=subscriptions" },
-  { key: "nav_giftcards" as const, icon: Gift, href: "/?cat=giftcards" },
-  { key: "nav_bestsellers" as const, icon: Trophy, href: "/?cat=bestsellers" },
-];
+interface Category { id: string; name: string; slug: string }
 
 export default function CategoryBar() {
-  const { t } = useI18n();
+  const [cats, setCats] = useState<Category[]>([]);
+  useEffect(() => {
+    function load(){ fetch("/api/categories").then(r=>r.json()).then(setCats).catch(()=>setCats([])); }
+    load();
+    const handler = () => load();
+    window.addEventListener("categories:updated", handler as any);
+    return () => window.removeEventListener("categories:updated", handler as any);
+  }, []);
   return (
     <nav className="bg-black text-white">
       <div className="container px-4 md:px-8">
         <ul className="flex items-center gap-6 overflow-x-auto py-2">
-          {items.map(({ key, icon: Icon, href }) => (
-            <li key={key} className="shrink-0">
-              <Link to={href} className="inline-flex items-center gap-2 text-sm hover:text-primary whitespace-nowrap">
-                <Icon className="w-5 h-5" />
-                <span>{t(key)}</span>
+          {cats.map((c) => (
+            <li key={c.id} className="shrink-0">
+              <Link to={`/category/${c.slug}`} className="inline-flex items-center gap-2 text-sm hover:text-primary whitespace-nowrap">
+                <span>{c.name}</span>
               </Link>
             </li>
           ))}

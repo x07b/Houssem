@@ -52,6 +52,7 @@ export default function Checkout() {
       subtotal,
     };
 
+    console.debug("checkout_started", { items: items.length, subtotal });
     const res = await fetch("/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -64,6 +65,8 @@ export default function Checkout() {
     const json = await res.json();
     const code = json.panierCode as string;
     clear();
+    console.debug("order_created", { code, subtotal, items: items.length });
+    console.debug("checkout_completed", { code });
     toast.success("Order placed! Check your email for confirmation.", {
       description: `Panier ${code} created. Check your email for details.`,
       action: {
@@ -81,7 +84,14 @@ export default function Checkout() {
         <section className="border rounded-2xl p-4 bg-card">
           <h2 className="font-semibold mb-3">Cart</h2>
           {items.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Your cart is empty. Browse deals.</p>
+            <div className="text-center py-10" onLoadCapture={()=>console.debug("cart_empty_viewed") }>
+              <p className="text-lg font-semibold">Your cart is empty</p>
+              <div className="mt-3">
+                <Button asChild>
+                  <a href="/">Continue shopping</a>
+                </Button>
+              </div>
+            </div>
           ) : (
             <ul className="space-y-3">
               {items.map((it) => {

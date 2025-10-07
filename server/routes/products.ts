@@ -1,9 +1,16 @@
 import { RequestHandler } from "express";
 import { readStore } from "../store";
 
-export const listPublicProducts: RequestHandler = (_req, res) => {
-  const store = readStore();
-  res.json(store.products || []);
+export const listPublicProducts: RequestHandler = (req, res) => {
+  const store: any = readStore();
+  const slug = String(req.query.category || "").trim();
+  let list = store.products || [];
+  if (slug) {
+    const cat = (store.categories || []).find((c: any) => c.slug === slug);
+    if (cat) list = list.filter((p: any) => p.categoryId === cat.id);
+    else list = [];
+  }
+  res.json(list);
 };
 
 export const getPublicProduct: RequestHandler = (req, res) => {
