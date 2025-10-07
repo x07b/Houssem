@@ -4,7 +4,8 @@ import { readStore, writeStore } from "../store";
 
 export const listCategories: RequestHandler = (_req, res) => {
   const store: any = readStore();
-  res.json(store.categories || []);
+  const list = (store.categories || []).filter((c: any) => c.published !== false);
+  res.json(list);
 };
 
 export const createCategory: RequestHandler = (req, res) => {
@@ -14,7 +15,7 @@ export const createCategory: RequestHandler = (req, res) => {
   const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
   const exists = (store.categories || []).some((c: any) => c.slug === slug);
   if (exists) return res.status(409).json({ error: "Category exists" });
-  const cat = { id: crypto.randomUUID(), name, slug };
+  const cat = { id: crypto.randomUUID(), name, slug, published: true };
   store.categories = store.categories || [];
   store.categories.push(cat);
   writeStore(store);
