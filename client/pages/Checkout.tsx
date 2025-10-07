@@ -65,6 +65,8 @@ export default function Checkout() {
     const json = await res.json();
     const code = json.panierCode as string;
     clear();
+    console.debug("order_created", { code, subtotal, items: items.length });
+    console.debug("checkout_completed", { code });
     toast.success("Order placed! Check your email for confirmation.", {
       description: `Panier ${code} created. Check your email for details.`,
       action: {
