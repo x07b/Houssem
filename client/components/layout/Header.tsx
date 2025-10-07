@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@/context/I18nContext";
 import { useCurrency, Currency } from "@/context/CurrencyContext";
 import { useCart } from "@/context/CartContext";
@@ -56,13 +57,15 @@ export default function Header() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  const navLinks = [
-    { to: "/?cat=gaming", label: t("nav_gaming") },
-    { to: "/?cat=software", label: t("nav_software") },
-    { to: "/?cat=subscriptions", label: t("nav_subscriptions") },
-    { to: "/?cat=giftcards", label: t("nav_giftcards") },
-    { to: "/?cat=bestsellers", label: t("nav_bestsellers") },
-  ];
+  const { data: categories = [], isLoading: catLoading, isError: catError } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const r = await fetch("/api/categories", { cache: "no-store" });
+      if (!r.ok) throw new Error("failed");
+      return (await r.json()) as { id: string; name: string; slug: string; published?: boolean }[];
+    },
+    staleTime: 60_000,
+  });
 
 
   return (
@@ -167,20 +170,28 @@ export default function Header() {
                   </div>
                 </div>
                 <nav className="flex-1 overflow-y-auto px-6 pb-6">
-                  <ul className="space-y-2 text-sm text-foreground">
-                    {navLinks.map((item) => (
-                      <li key={item.to}>
-                        <SheetClose asChild>
-                          <Link
-                            to={item.to}
-                            className="flex items-center justify-between rounded-md px-3 py-2 font-medium hover:bg-muted"
-                          >
-                            {item.label}
-                          </Link>
-                        </SheetClose>
-                      </li>
-                    ))}
-                  </ul>
+                  {!catError && (
+                    <ul className="space-y-2 text-sm text-foreground">
+                      {catLoading ? (
+                        Array.from({ length: 5 }).map((_, i) => (
+                          <li key={i} className="px-3 py-2 rounded-md bg-muted/50 animate-pulse" />
+                        ))
+                      ) : (
+                        categories.map((c) => (
+                          <li key={c.id}>
+                            <SheetClose asChild>
+                              <Link
+                                to={`/category/${c.slug}`}
+                                className="flex items-center justify-between rounded-md px-3 py-2 font-medium hover:bg-muted"
+                              >
+                                {c.name}
+                              </Link>
+                            </SheetClose>
+                          </li>
+                        ))
+                      )}
+                    </ul>
+                  )}
                 </nav>
                 <div className="space-y-4 border-t px-6 py-4 text-sm">
                   <div className="flex items-center justify-between gap-4">
@@ -217,18 +228,26 @@ export default function Header() {
             />
           </Link>
 
-          <ul className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
-            {navLinks.map((item) => (
-              <li key={item.to}>
-                <Link
-                  to={item.to}
-                  className="flex items-center gap-2 font-medium hover:text-foreground"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          {!catError && (
+            <ul className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
+              {catLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <li key={i} className="h-6 w-16 rounded-full bg-muted/50 animate-pulse" />
+                ))
+              ) : (
+                categories.map((c) => (
+                  <li key={c.id}>
+                    <Link
+                      to={`/category/${c.slug}`}
+                      className="flex items-center gap-2 font-medium hover:text-foreground"
+                    >
+                      {c.name}
+                    </Link>
+                  </li>
+                ))
+              )}
+            </ul>
+          )}
         </div>
 
         <div className="flex items-center gap-3 md:gap-4">
