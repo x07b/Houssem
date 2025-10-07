@@ -81,7 +81,14 @@ export default function Checkout() {
         <section className="border rounded-2xl p-4 bg-card">
           <h2 className="font-semibold mb-3">Cart</h2>
           {items.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Your cart is empty. Browse deals.</p>
+            <div className="text-center py-10">
+              <p className="text-lg font-semibold">Your cart is empty</p>
+              <div className="mt-3">
+                <Button asChild>
+                  <a href="/">Continue shopping</a>
+                </Button>
+              </div>
+            </div>
           ) : (
             <ul className="space-y-3">
               {items.map((it) => {
