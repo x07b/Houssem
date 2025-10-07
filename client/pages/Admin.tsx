@@ -36,6 +36,23 @@ export default function Admin() {
         onSelect={setSection}
         headerRight={<span className="text-sm text-muted-foreground">{orders.length} orders</span>}
       >
+        {selected && (
+          <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+            <div className="w-full max-w-lg rounded-2xl border bg-background p-4 shadow-xl">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold">Order {selected.code}</h3>
+                <button onClick={()=>setSelected(null)} className="text-sm underline">Close</button>
+              </div>
+              <div className="mt-3 text-sm">
+                <div><span className="text-muted-foreground">Customer:</span> {selected?.customer?.name || "Guest"} — {selected?.customer?.email} — {selected?.customer?.whatsapp}</div>
+                <div className="mt-1"><span className="text-muted-foreground">Created:</span> {new Date(selected.createdAt).toLocaleString()}</div>
+                <ul className="mt-3 space-y-1">
+                  {selected.items?.map((it:any)=> (<li key={it.id+it.qty} className="flex items-center justify-between"><span>{it.id}</span><span className="text-muted-foreground">× {it.qty}</span></li>))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
         {section === "dashboard" && (
           <div className="grid gap-6">
             <div className="border rounded-2xl p-4 bg-card">
