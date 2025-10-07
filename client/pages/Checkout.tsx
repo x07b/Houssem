@@ -52,6 +52,7 @@ export default function Checkout() {
       subtotal,
     };
 
+    console.debug("checkout_started", { items: items.length, subtotal });
     const res = await fetch("/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
