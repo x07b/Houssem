@@ -1,20 +1,24 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-interface Category { id: string; name: string; slug: string }
+interface Category { id: string; name: string; slug: string; published?: boolean }
 
 export default function CategoriesManager() {
-  const [list, setList] = useState<Category[]>([]);
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const qc = useQueryClient();
 
-  async function fetchList() {
-    const r = await fetch("/api/categories");
-    setList(await r.json());
-  }
-
-  useEffect(() => { fetchList(); }, []);
+  const { data: list = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const r = await fetch("/api/categories", { cache: "no-store" });
+      if (!r.ok) throw new Error("failed");
+      return (await r.json()) as Category[];
+    },
+    staleTime: 60_000,
+  });
 
   async function add() {
     const body = { name: name.trim() };
@@ -23,18 +27,16 @@ export default function CategoriesManager() {
     const r = await fetch("/api/categories", { method: "POST", headers: { "Content-Type":"application/json" }, body: JSON.stringify(body) });
     setLoading(false);
     if (!r.ok) { toast.error("Failed to create category"); return; }
-    toast.success("Category created");
+    toast.success("Category added");
     setName("");
-    await fetchList();
-    window.dispatchEvent(new Event("categories:updated"));
+    qc.invalidateQueries({ queryKey: ["categories"] });
   }
 
   async function remove(id: string) {
     const r = await fetch(`/api/categories/${id}`, { method: "DELETE" });
     if (!r.ok) { toast.error("Cannot delete category in use"); return; }
     toast.success("Category deleted");
-    await fetchList();
-    window.dispatchEvent(new Event("categories:updated"));
+    qc.invalidateQueries({ queryKey: ["categories"] });
   }
 
   return (
