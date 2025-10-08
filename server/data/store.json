@@ -55,6 +55,12 @@
       "id": "099d5dc9-5414-48a3-9cec-04c3f6022427",
       "name": "New Cat",
       "slug": "new-cat"
+    },
+    {
+      "id": "f56b737f-430e-4b95-82ec-be0fdff04838",
+      "name": "Gaming Softwares",
+      "slug": "gaming-softwares",
+      "published": true
     }
   ]
 }
