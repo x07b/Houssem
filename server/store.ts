@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import crypto from "crypto";
 import { StoreState } from "@shared/entities";
 
 const DATA_PATH = path.join(process.cwd(), "server", "data");
@@ -9,7 +10,14 @@ const defaultState: any = {
   products: [],
   banners: [],
   promos: [],
-  categories: [],
+  categories: [
+    {
+      id: crypto.randomUUID(),
+      name: "Gaming Softwares",
+      slug: "gaming-softwares",
+      published: true,
+    },
+  ],
   toggles: { showNewsletter: true, showPromo: true, showPremium: true },
   orders: [],
 };
@@ -22,7 +30,20 @@ export function ensureStore() {
 export function readStore(): StoreState {
   ensureStore();
   const raw = fs.readFileSync(FILE, "utf-8");
-  return JSON.parse(raw) as StoreState;
+  const store = JSON.parse(raw) as StoreState & { categories?: any[] };
+  // Ensure default category exists for existing stores
+  const hasDefault = (store.categories || []).some((c) => c?.slug === "gaming-softwares");
+  if (!hasDefault) {
+    store.categories = store.categories || [];
+    store.categories.push({
+      id: crypto.randomUUID(),
+      name: "Gaming Softwares",
+      slug: "gaming-softwares",
+      published: true,
+    });
+    writeStore(store as StoreState);
+  }
+  return store as StoreState;
 }
 
 export function writeStore(next: StoreState) {
