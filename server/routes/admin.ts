@@ -1,5 +1,7 @@
 import { RequestHandler } from "express";
 import crypto from "crypto";
+import bcrypt from "bcryptjs";
+import { supabaseAdmin } from "../supabase";
 import { readStore, writeStore } from "../store";
 import { AdminProduct, Banner, HomeToggles, PromoCode, StoreState } from "@shared/entities";
 
@@ -25,11 +27,36 @@ function verify(token: string | undefined) {
   try { return JSON.parse(Buffer.from(b, "base64url").toString("utf-8")); } catch { return null; }
 }
 
-export const adminLogin: RequestHandler = (req, res) => {
+export const adminLogin: RequestHandler = async (req, res) => {
   const { username, password } = req.body || {};
+  if (!username || !password) return res.status(400).json({ error: "Missing credentials" });
+
+  // Try Supabase-backed auth first (requires SUPABASE_URL + service role/key envs)
+  try {
+    const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE || process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+    if (url && key) {
+      const { data, error } = await supabaseAdmin
+        .from("admins")
+        .select("id, username, password_hash")
+        .eq("username", username)
+        .single();
+
+      if (!error && data && data.password_hash) {
+        const ok = await bcrypt.compare(String(password), String(data.password_hash));
+        if (!ok) return res.status(401).json({ error: "Invalid credentials" });
+        const token = sign({ sub: username, id: data.id, ts: Date.now() });
+        return res.json({ ok: true, adminId: data.id, token });
+      }
+    }
+  } catch (_e) {
+    // fall back to local auth
+  }
+
+  // Fallback to local development credentials
   if (username === ADMIN_USER && password === ADMIN_PASS) {
     const token = sign({ sub: username, ts: Date.now() });
-    return res.json({ token });
+    return res.json({ ok: true, token });
   }
   res.status(401).json({ error: "Invalid credentials" });
 };
