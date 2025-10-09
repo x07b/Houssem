@@ -57,18 +57,6 @@
       "slug": "new-cat"
     },
     {
-      "id": "f56b737f-430e-4b95-82ec-be0fdff04838",
-      "name": "Gaming Softwares",
-      "slug": "gaming-softwares",
-      "published": true
-    },
-    {
-      "id": "6e9c0baa-8473-4e9b-a0ed-5d9bf9c04d35",
-      "name": "Gaming",
-      "slug": "gaming",
-      "published": true
-    },
-    {
       "id": "ae7ee2dd-c518-407d-8b6e-06a750784b76",
       "name": "Softwares",
       "slug": "softwares",
