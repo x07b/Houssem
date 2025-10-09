@@ -2,6 +2,7 @@ import Layout from "@/components/layout/Layout";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import ProductCard from "@/components/ProductCard";
+import { supabase } from "@/lib/supabase";
 
 interface Category { id: string; name: string; slug: string }
 
@@ -13,13 +14,30 @@ export default function CategoryPage() {
 
   useEffect(() => {
     let mounted = true;
+    function slugify(input: string) {
+      return input.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+    }
     async function run() {
       setLoading(true);
-      const cats: Category[] = await fetch("/api/categories", { cache: "no-store" }).then(r=>r.json());
+      const { data: catsData } = await supabase.from("categories").select("id,name");
+      const cats: Category[] = (catsData || []).map((c: any) => ({ id: String(c.id), name: c.name as string, slug: slugify(String(c.name)) }));
       const cat = cats.find(c=>c.slug===slug) || null;
       if (mounted) setCategory(cat);
-      const prods = await fetch(`/api/products?category=${encodeURIComponent(slug || "")}`, { cache: "no-store" }).then(r=>r.json());
-      if (mounted) setProducts(prods);
+      if (cat) {
+        const { data: prodsData } = await supabase.from("products").select("id,title,description,price,image_url,category_id").eq("category_id", Number(cat.id));
+        const prods = (prodsData || []).map((row: any) => ({
+          id: String(row.id),
+          title: row.title,
+          description: row.description || "",
+          image: row.image_url || "",
+          price: { USD: typeof row.price === "string" ? parseFloat(row.price) : Number(row.price || 0) },
+          variants: [],
+          categoryId: row.category_id ? String(row.category_id) : undefined,
+        }));
+        if (mounted) setProducts(prods);
+      } else {
+        if (mounted) setProducts([]);
+      }
       setLoading(false);
       if (cat) {
         document.title = `${cat.name} – Store`;

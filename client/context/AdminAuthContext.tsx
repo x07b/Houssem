@@ -19,7 +19,11 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     const res = await fetch("/api/admin/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username, password }) });
     if (!res.ok) return false;
     const data = await res.json();
-    setToken(data.token);
+    if (data?.token) {
+      setToken(String(data.token));
+    } else if (data?.ok) {
+      setToken("ok");
+    }
     return true;
   };
 

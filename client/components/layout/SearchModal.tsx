@@ -201,7 +201,7 @@ function SearchContent({ onClose }: { onClose: () => void }) {
   }
 
   const platformOptions = ["PC","PS","Xbox","Switch"];
-  const categoryOptions = ["Gaming","Software","Gift cards"];
+  const categoryOptions = ["Gift cards"];
   const regionOptions = ["Global","EU","US"];
   const priceOptions: {label: string, value?: number}[] = [
     { label: "≤$10", value: 10 },

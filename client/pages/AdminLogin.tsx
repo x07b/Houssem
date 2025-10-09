@@ -1,5 +1,5 @@
 import { useAdminAuth } from "@/context/AdminAuthContext";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -11,18 +11,29 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const timerRef = useRef<number | null>(null);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting || timerRef.current) return;
     setSubmitting(true);
     setError(null);
-    const ok = await login(username, password);
-    setSubmitting(false);
-    if (!ok) {
-      setError("Invalid username or password.");
-      return;
-    }
-    navigate("/admin");
+    timerRef.current = window.setTimeout(async () => {
+      try {
+        const ok = await login(username, password);
+        if (!ok) {
+          setError("Invalid username or password.");
+          return;
+        }
+        navigate("/admin");
+      } finally {
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+          timerRef.current = null;
+        }
+        setSubmitting(false);
+      }
+    }, 300);
   };
 
   return (

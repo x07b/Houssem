@@ -11,7 +11,6 @@ const defaultState: any = {
   banners: [],
   promos: [],
   categories: [
-    { id: crypto.randomUUID(), name: "Gaming", slug: "gaming", published: true },
     { id: crypto.randomUUID(), name: "Softwares", slug: "softwares", published: true },
   ],
   toggles: { showNewsletter: true, showPromo: true, showPremium: true },
@@ -29,7 +28,6 @@ export function readStore(): StoreState {
   const store = JSON.parse(raw) as StoreState & { categories?: any[] };
   // Ensure default categories exist for existing stores
   const required = [
-    { name: "Gaming", slug: "gaming" },
     { name: "Softwares", slug: "softwares" },
   ];
   let updated = false;

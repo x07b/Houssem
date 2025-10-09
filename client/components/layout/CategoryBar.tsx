@@ -1,12 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
 
 interface Category { id: string; name: string; slug: string }
 
 export default function CategoryBar() {
   const [cats, setCats] = useState<Category[]>([]);
   useEffect(() => {
-    function load(){ fetch("/api/categories").then(r=>r.json()).then(setCats).catch(()=>setCats([])); }
+    function slugify(input: string) {
+      return input.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+    }
+    async function load(){
+      const { data, error } = await supabase.from("categories").select("id,name");
+      if (error || !data) { setCats([]); return; }
+      setCats(data.map((c: any)=> ({ id: String(c.id), name: c.name as string, slug: slugify(String(c.name)) })));
+    }
     load();
     const handler = () => load();
     window.addEventListener("categories:updated", handler as any);
