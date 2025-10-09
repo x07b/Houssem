@@ -9,6 +9,7 @@ const legalLinks = [
   { label: "Terms", href: "#" },
   { label: "Refund Policy", href: "#" },
   { label: "Privacy", href: "#" },
+  { label: "Admin", href: "/admin/login" },
 ];
 
 const supportItems = (
