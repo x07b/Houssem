@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { AdminProduct } from "@shared/entities";
+import { supabase } from "@/lib/supabase";
 
 interface ProductsCtx {
   products: AdminProduct[];
