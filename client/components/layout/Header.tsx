@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
 import { useI18n } from "@/context/I18nContext";
 import { useCurrency, Currency } from "@/context/CurrencyContext";
 import { useCart } from "@/context/CartContext";
@@ -57,12 +58,16 @@ export default function Header() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  function slugify(input: string) {
+    return input.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+  }
+
   const { data: categories = [], isLoading: catLoading, isError: catError } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      const r = await fetch("/api/categories", { cache: "no-store" });
-      if (!r.ok) throw new Error("failed");
-      return (await r.json()) as { id: string; name: string; slug: string; published?: boolean }[];
+      const { data, error } = await supabase.from("categories").select("id,name");
+      if (error || !data) throw new Error("failed");
+      return data.map((c: any) => ({ id: String(c.id), name: c.name as string, slug: slugify(String(c.name)) }));
     },
     staleTime: 60_000,
   });
