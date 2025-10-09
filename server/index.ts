@@ -39,6 +39,12 @@ export function createServer() {
   app.get("/api/orders/:code", getOrderByCode);
 
   // Admin API
+  // Health check for envs/runtime
+  app.get("/api/admin/login", (_req, res) => {
+    const hasUrl = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL);
+    const hasService = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE || process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY);
+    res.json({ ok: true, hasUrl, hasService, runtime: "nodejs" });
+  });
   app.post("/api/admin/login", adminLogin);
   app.get("/api/admin/orders", requireAuth, listOrders);
   app.get("/api/admin/orders/:code", requireAuth, getOrderByCode);
