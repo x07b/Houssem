@@ -14,7 +14,25 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
   const [products, setProducts] = useState<AdminProduct[]>([]);
 
   useEffect(() => {
-    fetch("/api/products").then(r=>r.json()).then(setProducts).catch(()=>setProducts([]));
+    let mounted = true;
+    (async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("id,title,description,price,image_url,category_id");
+      if (!mounted) return;
+      if (error || !data) { setProducts([]); return; }
+      const mapped: AdminProduct[] = data.map((row: any) => ({
+        id: String(row.id),
+        title: row.title,
+        description: row.description || "",
+        image: row.image_url || "",
+        price: { USD: typeof row.price === "string" ? parseFloat(row.price) : Number(row.price || 0) },
+        variants: [],
+        categoryId: row.category_id ? String(row.category_id) : undefined,
+      }));
+      setProducts(mapped);
+    })();
+    return () => { mounted = false; };
   }, []);
 
   const productsById = useMemo(() => Object.fromEntries(products.map(p=>[p.id, p])), [products]);
