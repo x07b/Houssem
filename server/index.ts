@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { handleSendEmail } from "./routes/order";
-import { adminLogin, requireAuth, listProducts, createProduct, updateProduct, deleteProduct, listBanners, upsertBanner, deleteBanner, getToggles, setToggles, listPromos, upsertPromo, deletePromo, listOrders } from "./routes/admin";
+import { requireAuth, listProducts, createProduct, updateProduct, deleteProduct, listBanners, upsertBanner, deleteBanner, getToggles, setToggles, listPromos, upsertPromo, deletePromo, listOrders } from "./routes/admin";
 import { handleCheckout, getOrderByCode } from "./routes/checkout";
 import { validatePromo } from "./routes/promo";
 import { listPublicProducts, getPublicProduct } from "./routes/products";
@@ -39,13 +39,6 @@ export function createServer() {
   app.get("/api/orders/:code", getOrderByCode);
 
   // Admin API
-  // Health check for envs/runtime
-  app.get("/api/admin/login", (_req, res) => {
-    const hasUrl = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL);
-    const hasService = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE || process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY);
-    res.json({ ok: true, hasUrl, hasService, runtime: "nodejs" });
-  });
-  app.post("/api/admin/login", adminLogin);
   app.get("/api/admin/orders", requireAuth, listOrders);
   app.get("/api/admin/orders/:code", requireAuth, getOrderByCode);
 
