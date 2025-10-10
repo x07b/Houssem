@@ -1,8 +1,9 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
+interface LoginResult { ok: boolean; error?: string }
 interface AdminAuth {
   token: string | null;
-  login: (username: string, password: string) => Promise<boolean>;
+  login: (username: string, password: string) => Promise<LoginResult>;
   logout: () => void;
 }
 
@@ -15,16 +16,18 @@ export function AdminAuthProvider({ children }: { children: React.ReactNode }) {
     if (token) localStorage.setItem("admin_token", token); else localStorage.removeItem("admin_token");
   }, [token]);
 
-  const login = async (username: string, password: string) => {
-    const res = await fetch("/api/admin/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username, password }) });
-    if (!res.ok) return false;
-    const data = await res.json();
-    if (data?.token) {
-      setToken(String(data.token));
-    } else if (data?.ok) {
+  const login = async (username: string, password: string): Promise<LoginResult> => {
+    try {
+      const res = await fetch("/api/admin/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username, password }) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data?.ok) {
+        return { ok: false, error: data?.error || "Invalid username or password" };
+      }
       setToken("ok");
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: "Network error" };
     }
-    return true;
   };
 
   const logout = () => setToken(null);
