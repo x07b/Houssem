@@ -235,6 +235,12 @@ export default function Header() {
 
           {!catError && (
             <ul className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
+              <li>
+                <Link to="/categories/gaming" className="flex items-center gap-2 font-medium hover:text-foreground">Gaming</Link>
+              </li>
+              <li>
+                <Link to="/categories/softwares" className="flex items-center gap-2 font-medium hover:text-foreground">Softwares</Link>
+              </li>
               {catLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <li key={i} className="h-6 w-16 rounded-full bg-muted/50 animate-pulse" />
