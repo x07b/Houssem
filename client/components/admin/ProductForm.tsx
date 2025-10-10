@@ -102,7 +102,6 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
       <div className="grid gap-2">
         <label className="text-sm font-medium">Category</label>
         <select className="rounded border px-3 py-2 bg-background w-full" value={categoryId} onChange={(e)=>setCategoryId(e.target.value)}>
-          <option value="">N/A (All)</option>
           {categories.map(c=> (<option key={c.id} value={c.id}>{c.name}</option>))}
         </select>
       </div>
