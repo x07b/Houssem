@@ -20,9 +20,9 @@ export default function AdminLogin() {
     setError(null);
     timerRef.current = window.setTimeout(async () => {
       try {
-        const ok = await login(username, password);
-        if (!ok) {
-          setError("Invalid username or password.");
+        const result = await login(username, password);
+        if (!result.ok) {
+          setError(result.error || "Invalid username or password.");
           return;
         }
         navigate("/admin");

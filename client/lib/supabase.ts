@@ -1,7 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 
-const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const anon = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+const url = (import.meta as any).env.NEXT_PUBLIC_SUPABASE_URL as string | undefined
+  ?? (import.meta as any).env.VITE_SUPABASE_URL as string | undefined;
+const anon = (import.meta as any).env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string | undefined
+  ?? (import.meta as any).env.VITE_SUPABASE_ANON_KEY as string | undefined;
 
 type Row = Record<string, any>;
 
@@ -16,15 +18,10 @@ function createFallback() {
         },
         async select(_columns?: string) {
           if (table === 'categories') {
-            const res = await fetch('/api/categories');
-            if (!res.ok) return { data: null as any, error: new Error('failed') };
-            const data = await res.json();
-            return { data, error: null };
+            return { data: [], error: null };
           }
           if (table === 'products') {
-            const res = await fetch('/api/products');
-            if (!res.ok) return { data: null as any, error: new Error('failed') };
-            let data: Row[] = await res.json();
+            let data: Row[] = [];
             if (filters.col === 'category_id' && filters.val != null) {
               const id = String(filters.val);
               data = data.filter((p: any) => String(p.categoryId || p.category_id) === id);

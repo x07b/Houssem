@@ -24,7 +24,7 @@ export default function CategoryPage() {
       const cat = cats.find(c=>c.slug===slug) || null;
       if (mounted) setCategory(cat);
       if (cat) {
-        const { data: prodsData } = await supabase.from("products").select("id,title,description,price,image_url,category_id").eq("category_id", Number(cat.id));
+        const { data: prodsData } = await supabase.from("products").select("id,title,description,price,image_url,category_id").eq("category_id", cat.id);
         const prods = (prodsData || []).map((row: any) => ({
           id: String(row.id),
           title: row.title,
@@ -47,7 +47,8 @@ export default function CategoryPage() {
           link.setAttribute('rel','canonical');
           document.head.appendChild(link);
         }
-        link.href = `${window.location.origin}/category/${cat.slug}`;
+        const isPlural = typeof window !== 'undefined' && window.location.pathname.startsWith('/categories/');
+        link.href = `${window.location.origin}/${isPlural ? 'categories' : 'category'}/${cat.slug}`;
       }
     }
     run();
@@ -63,9 +64,9 @@ export default function CategoryPage() {
         <div className="mt-6 flex items-center justify-center">
           <div className="w-full max-w-md rounded-2xl border bg-card p-6 text-center shadow-sm">
             <h2 className="text-lg font-semibold">No products yet</h2>
-            <p className="mt-1 text-sm text-muted-foreground">We’re adding items to {category?.name ?? slug} soon.</p>
+            <p className="mt-1 text-sm text-muted-foreground">No items found for {category?.name ?? slug}. Add products from the admin area.</p>
             <div className="mt-4">
-              <a href="/" className="underline">Back to Home</a>
+              <a href="/admin" className="underline">Go to Admin</a>
             </div>
           </div>
         </div>

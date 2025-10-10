@@ -8,41 +8,38 @@ function setCors(res: any) {
 }
 
 function getSupabaseAdmin() {
-  const url =
-    process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    process.env.VITE_SUPABASE_URL ||
-    ''
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || ''
   const service = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
   if (!url || !service) throw new Error('Missing Supabase env')
   return createClient(url, service)
 }
 
-// Vercel's Node function signature (req, res)
 export default async function handler(req: any, res: any) {
   setCors(res)
 
   if (req.method === 'OPTIONS') return res.status(204).end()
 
-  // Health check: verify envs are visible on the deployed function
   if (req.method === 'GET') {
     return res.status(200).json({
       ok: true,
-      hasUrl: Boolean(
-        process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL
-      ),
+      hasUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL),
+      hasAnon: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY),
       hasService: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
-      runtime: 'node'
     })
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ ok: false, error: 'METHOD_NOT_ALLOWED' })
+    return res.status(405).json({ ok: false, error: 'Method not allowed' })
   }
 
   try {
-    const { username, password } = req.body || {}
+    let body: any = req.body
+    if (typeof body === 'string') {
+      try { body = JSON.parse(body) } catch (_) { body = {} }
+    }
+    const { username, password } = body || {}
     if (!username || !password) {
-      return res.status(400).json({ ok: false, error: 'MISSING_CREDENTIALS' })
+      return res.status(400).json({ ok: false, error: 'Missing credentials' })
     }
 
     const supabase = getSupabaseAdmin()
@@ -53,15 +50,23 @@ export default async function handler(req: any, res: any) {
       .single()
 
     if (error || !data) {
-      return res.status(401).json({ ok: false, error: 'INVALID_LOGIN' })
+      return res.status(401).json({ ok: false, error: 'Invalid username or password' })
     }
 
     const ok = await bcrypt.compare(password, data.password_hash)
-    if (!ok) return res.status(401).json({ ok: false, error: 'INVALID_LOGIN' })
+    if (!ok) {
+      return res.status(401).json({ ok: false, error: 'Invalid username or password' })
+    }
 
-    return res.status(200).json({ ok: true, adminId: data.id })
+    const maxAge = 60 * 60 * 8 // 8 hours
+    res.setHeader(
+      'Set-Cookie',
+      `admin_ok=1; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}; Secure`
+    )
+
+    return res.status(200).json({ ok: true })
   } catch (e: any) {
     console.error('ADMIN_LOGIN_ERROR', e?.message || e)
-    return res.status(500).json({ ok: false, error: 'SERVER_ERROR' })
+    return res.status(500).json({ ok: false, error: 'Server error' })
   }
 }
