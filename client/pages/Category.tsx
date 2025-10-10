@@ -24,7 +24,7 @@ export default function CategoryPage() {
       const cat = cats.find(c=>c.slug===slug) || null;
       if (mounted) setCategory(cat);
       if (cat) {
-        const { data: prodsData } = await supabase.from("products").select("id,title,description,price,image_url,category_id").eq("category_id", Number(cat.id));
+        const { data: prodsData } = await supabase.from("products").select("id,title,description,price,image_url,category_id").eq("category_id", cat.id);
         const prods = (prodsData || []).map((row: any) => ({
           id: String(row.id),
           title: row.title,
