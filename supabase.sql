@@ -43,19 +43,27 @@ alter table admins enable row level security;
 alter table categories enable row level security;
 alter table products enable row level security;
 
+-- Clean up old policies if they exist (Postgres doesn't support IF NOT EXISTS for policies)
+drop policy if exists admins_no_access on admins;
+drop policy if exists admins_no_access_auth on admins;
+drop policy if exists categories_read_anon on categories;
+drop policy if exists categories_read_auth on categories;
+drop policy if exists products_read_anon on products;
+drop policy if exists products_read_auth on products;
+
 -- No public access to admins (service key must be used server-side)
-create policy if not exists admins_no_access on admins
+create policy admins_no_access on admins
   for select to anon using (false);
-create policy if not exists admins_no_access_auth on admins
+create policy admins_no_access_auth on admins
   for select to authenticated using (false);
 
 -- Public read for categories and products
-create policy if not exists categories_read_anon on categories
+create policy categories_read_anon on categories
   for select to anon using (true);
-create policy if not exists categories_read_auth on categories
+create policy categories_read_auth on categories
   for select to authenticated using (true);
 
-create policy if not exists products_read_anon on products
+create policy products_read_anon on products
   for select to anon using (true);
-create policy if not exists products_read_auth on products
+create policy products_read_auth on products
   for select to authenticated using (true);
