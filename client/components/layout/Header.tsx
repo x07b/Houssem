@@ -67,7 +67,13 @@ export default function Header() {
     queryFn: async () => {
       const { data, error } = await supabase.from("categories").select("id,name");
       if (error || !data) throw new Error("failed");
-      return data.map((c: any) => ({ id: String(c.id), name: c.name as string, slug: slugify(String(c.name)) }));
+      const mapped = data.map((c: any) => ({ id: String(c.id), name: c.name as string, slug: slugify(String(c.name)) }));
+      const seen = new Set<string>();
+      return mapped.filter((c: any) => {
+        if (seen.has(c.slug)) return false;
+        seen.add(c.slug);
+        return true;
+      });
     },
     staleTime: 60_000,
   });
