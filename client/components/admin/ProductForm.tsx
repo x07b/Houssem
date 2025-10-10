@@ -44,11 +44,22 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
     setVariants((v)=> v.filter((_, i)=> i!==idx));
   }
 
-  useEffect(() => { fetch("/api/categories").then(r=>r.json()).then((list)=>setCategories(list)).catch(()=>setCategories([])); }, []);
+  useEffect(() => {
+    (async () => {
+      try {
+        const { supabase } = await import("@/lib/supabase");
+        const { data, error } = await supabase.from("categories").select("id,name");
+        if (error || !data) { setCategories([]); return; }
+        setCategories(data.map((c: any)=> ({ id: String(c.id), name: c.name as string })));
+      } catch {
+        setCategories([]);
+      }
+    })();
+  }, []);
 
   function submit() {
     const payload: any = { title, description, image, price, discountPercent, variants };
-    if (categoryId) payload.categoryId = categoryId; // N/A => no categoryId
+    if (categoryId) payload.categoryId = categoryId;
     onSave(payload);
   }
 
