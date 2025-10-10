@@ -33,7 +33,18 @@ export default function ProductsManager({ token }: { token: string | null }) {
   const [editing, setEditing] = useState<AdminProduct | null>(null);
 
   useEffect(() => {
-    afetch("/api/admin/products").then(setItems).catch((e)=>{
+    afetch("/api/admin/products").then((rows: any[]) => {
+      const mapped: AdminProduct[] = (rows || []).map((resp: any) => ({
+        id: String(resp.id),
+        title: resp.title,
+        description: resp.description || "",
+        image: resp.image_url || "",
+        price: { USD: typeof resp.price === 'string' ? parseFloat(resp.price) : Number(resp.price || 0) },
+        variants: [],
+        categoryId: resp.category_id ? String(resp.category_id) : undefined,
+      }));
+      setItems(mapped);
+    }).catch((e)=>{
       toast({ title: "Failed to load products", description: String(e?.message || e), variant: "destructive" as any });
     });
   }, []);
