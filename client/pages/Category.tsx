@@ -47,7 +47,8 @@ export default function CategoryPage() {
           link.setAttribute('rel','canonical');
           document.head.appendChild(link);
         }
-        link.href = `${window.location.origin}/category/${cat.slug}`;
+        const isPlural = typeof window !== 'undefined' && window.location.pathname.startsWith('/categories/');
+        link.href = `${window.location.origin}/${isPlural ? 'categories' : 'category'}/${cat.slug}`;
       }
     }
     run();
