@@ -63,9 +63,9 @@ export default function CategoryPage() {
         <div className="mt-6 flex items-center justify-center">
           <div className="w-full max-w-md rounded-2xl border bg-card p-6 text-center shadow-sm">
             <h2 className="text-lg font-semibold">No products yet</h2>
-            <p className="mt-1 text-sm text-muted-foreground">We’re adding items to {category?.name ?? slug} soon.</p>
+            <p className="mt-1 text-sm text-muted-foreground">No items found for {category?.name ?? slug}. Add products from the admin area.</p>
             <div className="mt-4">
-              <a href="/" className="underline">Back to Home</a>
+              <a href="/admin" className="underline">Go to Admin</a>
             </div>
           </div>
         </div>
