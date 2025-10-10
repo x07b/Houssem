@@ -62,7 +62,11 @@ export const adminLogin: RequestHandler = async (req, res) => {
 };
 
 export const requireAuth: RequestHandler = (req, res, next) => {
-  const token = (req.headers.authorization || "").replace("Bearer ", "");
+  const auth = String(req.headers.authorization || "");
+  const token = auth.replace("Bearer ", "").trim();
+  const hasCookie = String(req.headers.cookie || "").includes("admin_ok=1");
+  // Accept either a valid signed token, a simple "ok" token from the serverless login, or cookie flag
+  if (token === "ok" || hasCookie) return next();
   const payload = verify(token);
   if (!payload) return res.status(401).json({ error: "Unauthorized" });
   next();
