@@ -3,8 +3,23 @@ import { Button } from "@/components/ui/button";
 
 function useAuthedFetch(token: string | null) {
   return async (url: string, init?: RequestInit) => {
-    const res = await fetch(url, { ...(init||{}), headers: { "Content-Type":"application/json", Authorization: token ? `Bearer ${token}` : "" , ...(init?.headers||{}) } });
-    return res.json();
+    const res = await fetch(url, {
+      ...(init || {}),
+      credentials: 'include',
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
+        ...(init?.headers || {}),
+      },
+    });
+    const text = await res.text();
+    let data: any = undefined;
+    try { data = text ? JSON.parse(text) : undefined; } catch { /* keep raw */ }
+    if (!res.ok) {
+      const msg = (data && (data.error || data.message)) || `Request failed (${res.status})`;
+      throw new Error(msg);
+    }
+    return data;
   };
 }
 
