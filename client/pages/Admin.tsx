@@ -23,10 +23,24 @@ export default function Admin() {
 
   useEffect(() => {
     if (!token) return;
-    fetch("/api/admin/orders", { headers: { Authorization: `Bearer ${token}` } })
-      .then((r) => r.ok ? r.json() : [])
-      .then((list) => setOrders(list as any[]))
-      .catch(() => setOrders([]));
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/orders", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
+        });
+        const text = await res.text();
+        let data: any = undefined;
+        try { data = text ? JSON.parse(text) : undefined; } catch { /* keep raw */ }
+        if (!res.ok) { setOrders([]); return; }
+        setOrders((Array.isArray(data) ? data : []) as any[]);
+      } catch {
+        setOrders([]);
+      }
+    })();
   }, [token]);
 
   return (
