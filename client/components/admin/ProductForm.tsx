@@ -47,9 +47,9 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
   useEffect(() => {
     (async () => {
       try {
-        const { supabase } = await import("@/lib/supabase");
-        const { data, error } = await supabase.from("categories").select("id,name");
-        if (error || !data) { setCategories([]); return; }
+        const res = await fetch("/api/categories");
+        if (!res.ok) { setCategories([]); return; }
+        const data = await res.json();
         setCategories(data.map((c: any)=> ({ id: String(c.id), name: c.name as string })));
       } catch {
         setCategories([]);
@@ -102,6 +102,7 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
       <div className="grid gap-2">
         <label className="text-sm font-medium">Category</label>
         <select className="rounded border px-3 py-2 bg-background w-full" value={categoryId} onChange={(e)=>setCategoryId(e.target.value)}>
+          <option value="">-- Select Category --</option>
           {categories.map(c=> (<option key={c.id} value={c.id}>{c.name}</option>))}
         </select>
       </div>

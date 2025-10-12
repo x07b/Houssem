@@ -36,12 +36,12 @@ export default function ProductsManager({ token }: { token: string | null }) {
     afetch("/api/admin/products").then((rows: any[]) => {
       const mapped: AdminProduct[] = (rows || []).map((resp: any) => ({
         id: String(resp.id),
-        title: resp.title,
+        title: resp.title || "",
         description: resp.description || "",
-        image: resp.image_url || "",
-        price: { USD: typeof resp.price === 'string' ? parseFloat(resp.price) : Number(resp.price || 0) },
-        variants: [],
-        categoryId: resp.category_id ? String(resp.category_id) : undefined,
+        image: resp.image || "",
+        price: resp.price || { USD: 0, EUR: 0, TND: 0, EGP: 0 },
+        variants: resp.variants || [],
+        categoryId: resp.categoryId,
       }));
       setItems(mapped);
     }).catch((e)=>{
@@ -60,24 +60,16 @@ export default function ProductsManager({ token }: { token: string | null }) {
             onSave={async (data)=>{
               try {
                 const payload = {
-                  id: editing.id,
                   title: data.title,
                   description: data.description,
                   price: Number(data.price?.USD ?? 0),
                   image_url: data.image || "",
                   category_id: (data as any).categoryId ? String((data as any).categoryId) : null,
                 };
-                const resp = await afetch(`/api/admin/products`, { method: "PUT", body: JSON.stringify(payload) });
-                setItems((list)=> list.map(it=> it.id===editing.id ? {
-                  id: String(resp.id),
-                  title: resp.title,
-                  description: resp.description || "",
-                  image: resp.image_url || "",
-                  price: { USD: typeof resp.price === 'string' ? parseFloat(resp.price) : Number(resp.price || 0) },
-                  variants: [],
-                  categoryId: resp.category_id ? String(resp.category_id) : undefined,
-                } : it));
+                const resp = await afetch(`/api/admin/products/${editing.id}`, { method: "PUT", body: JSON.stringify(payload) });
+                setItems((list)=> list.map(it=> it.id===editing.id ? resp : it));
                 setEditing(null);
+                toast({ title: "Product updated", description: "The product has been updated successfully." });
               } catch (e: any) {
                 toast({ title: "Update failed", description: String(e?.message || e), variant: "destructive" as any });
               }
@@ -99,16 +91,9 @@ export default function ProductsManager({ token }: { token: string | null }) {
                   category_id: (data as any).categoryId ? String((data as any).categoryId) : null,
                 };
                 const resp = await afetch("/api/admin/products", { method: "POST", body: JSON.stringify(payload) });
-                setItems((p)=>[...p, {
-                  id: String(resp.id),
-                  title: resp.title,
-                  description: resp.description || "",
-                  image: resp.image_url || "",
-                  price: { USD: typeof resp.price === 'string' ? parseFloat(resp.price) : Number(resp.price || 0) },
-                  variants: [],
-                  categoryId: resp.category_id ? String(resp.category_id) : undefined,
-                }]);
+                setItems((p)=>[...p, resp]);
                 setCreating(false);
+                toast({ title: "Product created", description: "The product has been created successfully." });
               } catch (e: any) {
                 toast({ title: "Create failed", description: String(e?.message || e), variant: "destructive" as any });
               }
@@ -134,8 +119,9 @@ export default function ProductsManager({ token }: { token: string | null }) {
                 <Button variant="outline" size="sm" onClick={()=>setEditing(p)}>Edit</Button>
                 <Button variant="destructive" size="sm" onClick={async()=>{
                   try {
-                    await afetch(`/api/admin/products`, { method: "DELETE", body: JSON.stringify({ id: p.id }) });
+                    await afetch(`/api/admin/products/${p.id}`, { method: "DELETE" });
                     setItems((list)=> list.filter(it=>it.id!==p.id));
+                    toast({ title: "Product deleted", description: "The product has been deleted successfully." });
                   } catch (e: any) {
                     toast({ title: "Delete failed", description: String(e?.message || e), variant: "destructive" as any });
                   }

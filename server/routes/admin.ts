@@ -82,7 +82,23 @@ export const listOrders: RequestHandler = (_req, res) => {
 export const listProducts: RequestHandler = (_req, res) => res.json(readStore().products);
 export const createProduct: RequestHandler = (req, res) => {
   const store = readStore();
-  const product: AdminProduct = { id: crypto.randomUUID(), ...req.body };
+  const { title, description, price, image_url, category_id } = req.body;
+  
+  const product: AdminProduct = { 
+    id: crypto.randomUUID(),
+    title: title || "",
+    description: description || "",
+    image: image_url || "",
+    price: { 
+      USD: typeof price === 'number' ? price : 0,
+      EUR: 0,
+      TND: 0,
+      EGP: 0
+    },
+    variants: [],
+    categoryId: category_id || undefined
+  };
+  
   store.products.push(product);
   writeStore(store);
   res.json(product);
@@ -91,7 +107,24 @@ export const updateProduct: RequestHandler = (req, res) => {
   const store = readStore();
   const idx = store.products.findIndex((p) => p.id === req.params.id);
   if (idx === -1) return res.status(404).json({ error: "Not found" });
-  store.products[idx] = { ...store.products[idx], ...req.body };
+  
+  const { title, description, price, image_url, category_id } = req.body;
+  
+  store.products[idx] = { 
+    ...store.products[idx],
+    title: title !== undefined ? title : store.products[idx].title,
+    description: description !== undefined ? description : store.products[idx].description,
+    image: image_url !== undefined ? image_url : store.products[idx].image,
+    categoryId: category_id !== undefined ? category_id : store.products[idx].categoryId
+  };
+  
+  if (price !== undefined) {
+    store.products[idx].price = {
+      ...store.products[idx].price,
+      USD: typeof price === 'number' ? price : store.products[idx].price.USD
+    };
+  }
+  
   writeStore(store);
   res.json(store.products[idx]);
 };
