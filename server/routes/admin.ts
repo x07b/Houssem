@@ -79,7 +79,11 @@ export const listOrders: RequestHandler = (_req, res) => {
 };
 
 // Products CRUD
-export const listProducts: RequestHandler = (_req, res) => res.json(readStore().products);
+export const listProducts: RequestHandler = (_req, res) => {
+  const store = readStore();
+  const products = Array.isArray(store.products) ? store.products : [];
+  res.json(products);
+};
 export const createProduct: RequestHandler = (req, res) => {
   const store = readStore();
   const { title, description, price, image_url, category_id } = req.body;

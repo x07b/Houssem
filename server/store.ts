@@ -26,18 +26,38 @@ export function readStore(): StoreState {
   ensureStore();
   const raw = fs.readFileSync(FILE, "utf-8");
   const store = JSON.parse(raw) as StoreState & { categories?: any[] };
+  
+  // Ensure all required fields are arrays
+  let updated = false;
+  if (!Array.isArray(store.products)) {
+    store.products = [];
+    updated = true;
+  }
+  if (!Array.isArray(store.banners)) {
+    store.banners = [];
+    updated = true;
+  }
+  if (!Array.isArray(store.promos)) {
+    store.promos = [];
+    updated = true;
+  }
+  if (!Array.isArray(store.orders)) {
+    store.orders = [];
+    updated = true;
+  }
+  
   // Ensure default categories exist for existing stores
+  store.categories = store.categories || [];
   const required = [
     { name: "Softwares", slug: "softwares" },
   ];
-  let updated = false;
-  store.categories = store.categories || [];
   for (const req of required) {
     if (!store.categories.some((c: any) => c?.slug === req.slug)) {
       store.categories.push({ id: crypto.randomUUID(), name: req.name, slug: req.slug, published: true });
       updated = true;
     }
   }
+  
   if (updated) writeStore(store as StoreState);
   return store as StoreState;
 }
