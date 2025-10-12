@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import ProductPage from "./pages/Product";
 import Checkout from "./pages/Checkout";
 import CategoryPage from "./pages/Category";
+import AllProducts from "./pages/AllProducts";
 import { I18nProvider } from "@/context/I18nContext";
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { CartProvider } from "@/context/CartContext";
@@ -37,6 +38,7 @@ export default function App() {
                     <BrowserRouter>
                       <Routes>
                         <Route path="/" element={<Index />} />
+                        <Route path="/products" element={<AllProducts />} />
                         <Route path="/product/:id" element={<ProductPage />} />
                         <Route path="/cart" element={<Checkout />} />
                         <Route path="/checkout" element={<Checkout />} />

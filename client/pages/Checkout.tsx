@@ -64,11 +64,26 @@ export default function Checkout() {
     }
     const json = await res.json();
     const code = json.panierCode as string;
+    const paymentLink = json.paymentLink as string | undefined;
+    const requiresPayment = json.requiresPayment as boolean;
+    
     clear();
     console.debug("order_created", { code, subtotal, items: items.length });
+    
+    // If payment is required (Flouci), redirect to payment page
+    if (requiresPayment && paymentLink) {
+      toast.success("Redirecting to payment...", {
+        description: `Order ${code} created. Completing payment...`,
+      });
+      // Redirect to Flouci payment page
+      window.location.href = paymentLink;
+      return;
+    }
+    
+    // Otherwise, show success and navigate to order page
     console.debug("checkout_completed", { code });
     toast.success("Order placed! Check your email for confirmation.", {
-      description: `Panier ${code} created. Check your email for details.`,
+      description: `Order ${code} created. Check your email for details.`,
       action: {
         label: "View order",
         onClick: () => navigate(`/order-success?code=${encodeURIComponent(code)}`),

@@ -183,6 +183,16 @@ export default function Header() {
                 <nav className="flex-1 overflow-y-auto px-6 pb-6">
                   {!catError && (
                     <ul className="space-y-2 text-sm text-foreground">
+                      <li>
+                        <SheetClose asChild>
+                          <Link
+                            to="/products"
+                            className="flex items-center justify-between rounded-md px-3 py-2 font-semibold bg-primary/10 text-primary hover:bg-primary/20"
+                          >
+                            All Products
+                          </Link>
+                        </SheetClose>
+                      </li>
                       {catLoading ? (
                         Array.from({ length: 5 }).map((_, i) => (
                           <li key={i} className="px-3 py-2 rounded-md bg-muted/50 animate-pulse" />
@@ -241,6 +251,14 @@ export default function Header() {
 
           {!catError && (
             <ul className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
+              <li>
+                <Link
+                  to="/products"
+                  className="flex items-center gap-2 font-semibold text-foreground hover:text-primary"
+                >
+                  All Products
+                </Link>
+              </li>
               {catLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <li key={i} className="h-6 w-16 rounded-full bg-muted/50 animate-pulse" />

@@ -3,11 +3,11 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { handleSendEmail } from "./routes/order";
-import { adminLogin, requireAuth, listProducts, createProduct, updateProduct, deleteProduct, listBanners, upsertBanner, deleteBanner, getToggles, setToggles, listPromos, upsertPromo, deletePromo, listOrders } from "./routes/admin";
-import { handleCheckout, getOrderByCode } from "./routes/checkout";
+import { adminLogin, requireAuth, listProducts, createProduct, updateProduct, deleteProduct, listBanners, upsertBanner, deleteBanner, getToggles, setToggles, listPromos, upsertPromo, deletePromo, listOrders, getProfile, updateProfile, changePassword } from "./routes/admin";
+import { handleCheckout, getOrderByCode, handleFlouciWebhook } from "./routes/checkout";
 import { validatePromo } from "./routes/promo";
 import { listPublicProducts, getPublicProduct } from "./routes/products";
-import { listCategories, createCategory, deleteCategory } from "./routes/categories";
+import { listCategories, createCategory, updateCategory, deleteCategory } from "./routes/categories";
 
 export function createServer() {
   const app = express();
@@ -26,6 +26,7 @@ export function createServer() {
   app.get("/api/demo", handleDemo);
   app.post("/api/send-email", handleSendEmail);
   app.post("/api/checkout", handleCheckout);
+  app.post("/api/webhook/flouci", handleFlouciWebhook);
   app.get("/api/promo/:code", validatePromo);
   app.get("/api/products", listPublicProducts);
   app.get("/api/products/:id", getPublicProduct);
@@ -33,6 +34,7 @@ export function createServer() {
   // Categories API
   app.get("/api/categories", listCategories);
   app.post("/api/categories", createCategory);
+  app.put("/api/categories/:id", updateCategory);
   app.delete("/api/categories/:id", deleteCategory);
 
   // Orders API
@@ -59,6 +61,10 @@ export function createServer() {
   app.get("/api/admin/promos", requireAuth, listPromos);
   app.post("/api/admin/promos", requireAuth, upsertPromo);
   app.delete("/api/admin/promos/:id", requireAuth, deletePromo);
+
+  app.get("/api/admin/profile", requireAuth, getProfile);
+  app.put("/api/admin/profile", requireAuth, updateProfile);
+  app.put("/api/admin/password", requireAuth, changePassword);
 
   return app;
 }
