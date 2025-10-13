@@ -59,8 +59,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // Fallback to local development credentials
   if (username === "root" && password === "root") {
-    const token = sign({ sub: username, ts: Date.now() });
-    return res.json({ ok: true, token });
+    // Return simple "ok" token for fallback auth
+    return res.json({ ok: true, token: "ok" });
   }
 
   return res.status(401).json({ error: "Invalid credentials" });
