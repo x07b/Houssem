@@ -1,6 +1,6 @@
 import serverless from "serverless-http";
 import type { Handler } from "@netlify/functions";
-import { createServer } from "../../server";
+import { createServer } from "../../server/index";
 
 // Initialize Express app once per runtime
 const app = createServer();

@@ -10,9 +10,21 @@
   
 [[redirects]]
   force = true
+  from = "/api/checkout"
+  status = 200
+  to = "/.netlify/functions/checkout"
+
+[[redirects]]
+  force = true
   from = "/api/*"
   status = 200
   to = "/.netlify/functions/api/:splat"
+
+[[redirects]]
+  force = true
+  from = "/api/checkout"
+  status = 200
+  to = "/.netlify/functions/checkout"
 
 [[redirects]]
   from = "/*"
