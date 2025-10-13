@@ -44,6 +44,7 @@ export interface PromoCode {
   id: string;
   code: string;
   discountPercent: number;
+  percent?: number; // Alias for backward compatibility
   active: boolean;
 }
 

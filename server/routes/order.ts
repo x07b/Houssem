@@ -16,7 +16,7 @@ export const handleSendEmail: RequestHandler = (req, res) => {
     return res.status(400).json({ error: parsed.error.flatten() });
   }
   const orderId = Math.random().toString(36).slice(2, 10).toUpperCase();
-  const response: OrderResponse = { orderId, delivered: true };
+  const response: OrderResponse = { panierCode: orderId, emailSent: false };
   // Placeholder: Here we could integrate nodemailer to actually send email with codes.
   console.log("Simulated email sent:", { orderId, to: parsed.data.email, items: parsed.data.items });
   res.status(200).json(response);

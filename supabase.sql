@@ -13,6 +13,8 @@ create table if not exists categories (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   slug text not null unique,
+  parent_id uuid references categories(id) on delete cascade,
+  published boolean default true,
   created_at timestamptz not null default now()
 );
 
@@ -20,6 +22,7 @@ create table if not exists products (
   id uuid primary key default gen_random_uuid(),
   category_id uuid references categories(id) on delete set null,
   title text not null,
+  description text,
   price numeric(10,2) not null default 0,
   image_url text,
   created_at timestamptz not null default now()
@@ -27,9 +30,13 @@ create table if not exists products (
 
 -- 2) Insert admin user `root` with bcrypt hash for password `root`
 -- Use pgcrypto's crypt() with bcrypt (blowfish) salt
-insert into admins (username, password_hash)
-values ('root', crypt('root', gen_salt('bf', 10)))
+insert into admins (username, password_hash, email, name)
+values ('root', crypt('root', gen_salt('bf', 10)), 'admin@example.com', 'Administrator')
 on conflict (username) do nothing;
+
+-- Add email and name columns if they don't exist
+alter table admins add column if not exists email text;
+alter table admins add column if not exists name text;
 
 -- 3) Seed categories
 insert into categories (name, slug)

@@ -181,9 +181,10 @@ export const handleCheckout: RequestHandler = async (req, res) => {
   }
 
   // Prepare items details for email
-  const itemsDetails = parsed.data.items.map(item => 
-    `- ${item.id} x ${item.qty}`
-  ).join("\n");
+  const itemsDetails = parsed.data.items
+    .filter(item => item.id && item.qty)
+    .map(item => `- ${item.id} x ${item.qty}`)
+    .join("\n");
 
   // Send confirmation emails (async, don't wait)
   sendOrderConfirmationEmail(order, itemsDetails).catch(e => 
