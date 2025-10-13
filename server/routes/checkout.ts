@@ -167,21 +167,8 @@ export const handleCheckout: RequestHandler = async (req, res) => {
     store.orders.push(order);
     writeStore(store);
 
-    // Initiate Flouci payment if amount > 0 and currency is TND
-    let paymentLink = null as string | null;
-    if (parsed.data.subtotal > 0 && parsed.data.currency === "TND") {
-      const flouciResponse = await initiateFlouciPayment(parsed.data.subtotal, code);
-      if (flouciResponse?.payment_url) {
-        paymentLink = flouciResponse.payment_url as string;
-        // Store payment ID in order
-        const updatedStore = readStore();
-        const orderIdx = updatedStore.orders.findIndex((o) => o.code === code);
-        if (orderIdx !== -1) {
-          updatedStore.orders[orderIdx].paymentId = flouciResponse.payment_id || flouciResponse.id;
-          writeStore(updatedStore);
-        }
-      }
-    }
+    // Flouci temporarily disabled: do not initiate payment; just return success and keep order pending
+    const paymentLink = null as string | null;
 
     // Prepare items details for email
     const itemsDetails = parsed.data.items
@@ -193,7 +180,7 @@ export const handleCheckout: RequestHandler = async (req, res) => {
     sendOrderConfirmationEmail(order, itemsDetails).catch((e) => console.error("Email send failed:", e));
 
     const whatsapp = process.env.WHATSAPP_NUMBER || null;
-    return res.json({ panierCode: code, whatsapp, paymentLink, requiresPayment: !!paymentLink });
+    return res.json({ panierCode: code, whatsapp, paymentLink, requiresPayment: false });
   } catch (error: any) {
     console.error("/api/checkout failed:", error?.stack || error);
     return res.status(500).json({ error: "Checkout failed", detail: String(error?.message || error) });
