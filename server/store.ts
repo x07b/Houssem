@@ -28,6 +28,12 @@ export function ensureStore() {
 }
 
 export function readStore(): StoreState {
+  // Dev-gate: disable local store in production/serverless environments
+  if (process.env.DISABLE_LOCAL_STORE === 'true' || process.env.NODE_ENV === 'production') {
+    console.warn("Local store disabled - using Supabase instead");
+    return defaultState as StoreState;
+  }
+  
   try {
     ensureStore();
     const raw = fs.readFileSync(FILE, "utf-8");
@@ -74,6 +80,12 @@ export function readStore(): StoreState {
 }
 
 export function writeStore(next: StoreState) {
+  // Dev-gate: disable local store in production/serverless environments
+  if (process.env.DISABLE_LOCAL_STORE === 'true' || process.env.NODE_ENV === 'production') {
+    console.warn("Local store disabled - using Supabase instead");
+    return;
+  }
+  
   try {
     ensureStore();
     fs.writeFileSync(FILE, JSON.stringify(next, null, 2));

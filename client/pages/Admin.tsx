@@ -18,6 +18,21 @@ export default function Admin() {
   const [orders, setOrders] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [selected, setSelected] = useState<any | null>(null);
+  const [metrics, setMetrics] = useState<{
+    totalOrders: number;
+    uniqueCustomers: number;
+    totalProducts: number;
+    recentOrders: number;
+    priorOrders: number;
+    growthPercentage: number;
+  }>({
+    totalOrders: 0,
+    uniqueCustomers: 0,
+    totalProducts: 0,
+    recentOrders: 0,
+    priorOrders: 0,
+    growthPercentage: 0,
+  });
 
   useEffect(() => {
     if (!token) navigate("/admin/login");
@@ -25,10 +40,38 @@ export default function Admin() {
 
   useEffect(() => {
     if (!token) return;
-    // Fetch orders
+    
+    // Fetch metrics
     (async () => {
       try {
-        const res = await fetch("/api/admin/orders", {
+        const res = await fetch("/api/admin/metrics", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
+        });
+        const text = await res.text();
+        let data: any = undefined;
+        try { data = text ? JSON.parse(text) : undefined; } catch { /* keep raw */ }
+        if (!res.ok) { return; }
+        setMetrics(data || {
+          totalOrders: 0,
+          uniqueCustomers: 0,
+          totalProducts: 0,
+          recentOrders: 0,
+          priorOrders: 0,
+          growthPercentage: 0,
+        });
+      } catch {
+        // Keep default metrics
+      }
+    })();
+
+    // Fetch orders for recent orders list
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/orders?limit=10", {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -39,37 +82,20 @@ export default function Admin() {
         let data: any = undefined;
         try { data = text ? JSON.parse(text) : undefined; } catch { /* keep raw */ }
         if (!res.ok) { setOrders([]); return; }
-        setOrders((Array.isArray(data) ? data : []) as any[]);
+        // Handle new API response format with pagination
+        const ordersData = data?.orders || data || [];
+        setOrders((Array.isArray(ordersData) ? ordersData : []) as any[]);
       } catch {
         setOrders([]);
       }
     })();
-    // Fetch products
-    (async () => {
-      try {
-        const res = await fetch("/api/admin/products", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          credentials: "include",
-        });
-        const text = await res.text();
-        let data: any = undefined;
-        try { data = text ? JSON.parse(text) : undefined; } catch { /* keep raw */ }
-        if (!res.ok) { setProducts([]); return; }
-        setProducts((Array.isArray(data) ? data : []) as any[]);
-      } catch {
-        setProducts([]);
-      }
-    })();
   }, [token]);
 
-  // Calculate stats
-  const totalOrders = orders.length;
-  const totalProducts = products.length;
-  const totalCustomers = new Set(orders.map(o => o.customer?.email).filter(Boolean)).size;
-  const recentOrders = orders.slice().reverse().slice(0, 10);
+  // Use metrics from API
+  const totalOrders = metrics.totalOrders;
+  const totalProducts = metrics.totalProducts;
+  const totalCustomers = metrics.uniqueCustomers;
+  const recentOrders = orders; // Already limited to 10 from API
 
   return (
     <AdminShell
@@ -159,7 +185,7 @@ export default function Admin() {
                 <TrendingUp className="h-5 w-5 text-orange-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">+{orders.length > 0 ? Math.round((recentOrders.length / totalOrders) * 100) : 0}%</div>
+                <div className="text-3xl font-bold">+{metrics.growthPercentage}%</div>
                 <p className="text-xs text-muted-foreground mt-1">Recent activity</p>
               </CardContent>
             </Card>
