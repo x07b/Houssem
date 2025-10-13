@@ -59,13 +59,16 @@ export default function Checkout() {
       body: JSON.stringify(payload),
     });
     if (!res.ok) {
+      const copy = res.clone();
       try {
         const err = await res.json();
         console.error("checkout_failed", err);
         toast.error(err?.error || "Something went wrong. Please try again.", { description: err?.detail });
       } catch (_) {
-        const text = await res.text();
-        console.error("checkout_failed_text", text);
+        try {
+          const text = await copy.text();
+          console.error("checkout_failed_text", text);
+        } catch {}
         toast.error("Something went wrong. Please try again.");
       }
       return;
