@@ -21,16 +21,48 @@ interface CurrencyContextValue {
 const CurrencyContext = createContext<CurrencyContextValue | undefined>(undefined);
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
-  const [currency, setCurrency] = useState<Currency>(() => (localStorage.getItem("currency") as Currency) || "USD");
+  const initial = (() => {
+    try {
+      const v = typeof window !== 'undefined' ? (localStorage.getItem("currency") as Currency | null) : null;
+      return (v === 'USD' || v === 'TND' || v === 'EGP' || v === 'EUR') ? v : 'USD';
+    } catch {
+      return 'USD';
+    }
+  })();
 
-  const convertFromUSD = (amountUSD: number, to: Currency = currency) => amountUSD * RATES[to];
+  const [currency, setCurrency] = useState<Currency>(initial);
 
-  const format = (amountUSD: number, to: Currency = currency) => {
-    const value = convertFromUSD(amountUSD, to);
-    return new Intl.NumberFormat(undefined, { style: "currency", currency: to }).format(value);
+  const safeCurrency = (c?: Currency): Currency => (c === 'USD' || c === 'TND' || c === 'EGP' || c === 'EUR') ? c : 'USD';
+
+  const convertFromUSD = (amountUSD: number, to?: Currency) => {
+    const cur = safeCurrency(to ?? currency);
+    const rate = RATES[cur] ?? 1;
+    return (Number.isFinite(amountUSD) ? amountUSD : 0) * rate;
   };
 
-  const value = useMemo(() => ({ currency, setCurrency: (c: Currency) => { localStorage.setItem("currency", c); setCurrency(c); }, convertFromUSD, format }), [currency]);
+  const format = (amountUSD: number, to?: Currency) => {
+    const cur = safeCurrency(to ?? currency);
+    const value = convertFromUSD(amountUSD, cur);
+    try {
+      return new Intl.NumberFormat(undefined, { style: "currency", currency: cur }).format(value);
+    } catch {
+      return `$${(value || 0).toFixed(2)}`;
+    }
+  };
+
+  const value = useMemo(
+    () => ({
+      currency,
+      setCurrency: (c: Currency) => {
+        const next = safeCurrency(c);
+        try { if (typeof window !== 'undefined') localStorage.setItem("currency", next); } catch {}
+        setCurrency(next);
+      },
+      convertFromUSD,
+      format,
+    }),
+    [currency]
+  );
 
   return <CurrencyContext.Provider value={value}>{children}</CurrencyContext.Provider>;
 }

@@ -20,6 +20,8 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const [categoryId, setCategoryId] = useState<string>(String((initial as any)?.categoryId || ""));
   const [isConverting, setIsConverting] = useState(false);
+  const [sku, setSku] = useState<string>((initial as any)?.sku || "");
+  const [inStock, setInStock] = useState<boolean>((initial as any)?.inStock !== false);
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -132,7 +134,7 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
   }, []);
 
   function submit() {
-    const payload: any = { title, description, image, price, discountPercent, variants };
+    const payload: any = { title, description, image, price, discountPercent, variants, sku, inStock };
     if (categoryId) payload.categoryId = categoryId;
     onSave(payload);
   }
@@ -154,6 +156,16 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
           <input className="rounded border px-3 py-2 bg-background flex-1" placeholder="Image URL or base64" value={image} onChange={(e)=>setImage(e.target.value)} />
         </div>
         {image && <img src={image} alt="preview" className="mt-2 h-28 w-28 object-cover rounded" />}
+      </div>
+
+      <div className="grid gap-2">
+        <label className="text-sm font-medium">Article Code (SKU)</label>
+        <input className="rounded border px-3 py-2 bg-background" value={sku} onChange={(e)=>setSku(e.target.value)} placeholder="e.g., TS-8092" />
+      </div>
+
+      <div className="flex items-center gap-2">
+        <input id="inStock" type="checkbox" checked={inStock} onChange={(e)=>setInStock(e.target.checked)} />
+        <label htmlFor="inStock" className="text-sm font-medium">In Stock</label>
       </div>
 
       <div className="grid gap-2">

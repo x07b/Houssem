@@ -53,10 +53,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from('products')
         .select(`
           id,
+          slug,
           title,
           description,
           image_url,
           price,
+          sku,
+          in_stock,
           category_id,
           created_at,
           categories (
@@ -80,6 +83,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         image: p.image_url,
         price: { USD: typeof p.price === 'string' ? parseFloat(p.price) : Number(p.price || 0), EUR: 0, TND: 0, EGP: 0 },
         categoryId: p.category_id,
+        sku: p.sku,
+        inStock: !!p.in_stock,
       }));
 
       return res.json(products);
@@ -93,9 +98,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from('products')
         .insert({
           title: body.title,
+          slug: (body.slug || String(body.title || '')).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
           description: body.description || '',
           image_url: body.image || '',
           price: Number(body.price || 0),
+          sku: body.sku || null,
+          in_stock: body.inStock !== false,
           category_id: body.categoryId || null,
         })
         .select()
@@ -114,6 +122,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         price: { USD: Number(data.price || 0), EUR: 0, TND: 0, EGP: 0 },
         variants: [],
         categoryId: data.category_id,
+        sku: data.sku,
+        inStock: !!data.in_stock,
       });
     }
 
@@ -131,9 +141,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from('products')
         .update({
           title: body.title,
+          slug: (body.slug || String(body.title || '')).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
           description: body.description,
           image_url: body.image,
           price: Number(body.price || 0),
+          sku: body.sku || null,
+          in_stock: body.inStock !== false,
           category_id: body.categoryId || null,
         })
         .eq('id', id)
@@ -153,6 +166,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         price: { USD: Number(data.price || 0), EUR: 0, TND: 0, EGP: 0 },
         variants: [],
         categoryId: data.category_id,
+        sku: data.sku,
+        inStock: !!data.in_stock,
       });
     }
 

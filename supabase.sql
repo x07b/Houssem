@@ -22,13 +22,21 @@ create table if not exists categories (
 
 create table if not exists products (
   id uuid primary key default gen_random_uuid(),
+  slug text unique,
   category_id uuid references categories(id) on delete set null,
   title text not null,
   description text,
   price numeric(10,2) not null default 0,
   image_url text,
+  sku text,
+  in_stock boolean not null default true,
   created_at timestamptz not null default now()
 );
+
+-- Ensure new columns exist on older databases
+alter table products add column if not exists slug text unique;
+alter table products add column if not exists sku text;
+alter table products add column if not exists in_stock boolean not null default true;
 
 -- Banners (for homepage hero)
 create table if not exists banners (
