@@ -64,11 +64,21 @@ export function readStore(): StoreState {
     }
   }
   
-  if (updated) writeStore(store as StoreState);
-  return store as StoreState;
+    if (updated) writeStore(store as StoreState);
+    return store as StoreState;
+  } catch (error) {
+    // Return empty store if file system isn't available (Vercel serverless)
+    console.warn("Cannot read from filesystem - returning default store:", error);
+    return defaultState as StoreState;
+  }
 }
 
 export function writeStore(next: StoreState) {
-  ensureStore();
-  fs.writeFileSync(FILE, JSON.stringify(next, null, 2));
+  try {
+    ensureStore();
+    fs.writeFileSync(FILE, JSON.stringify(next, null, 2));
+  } catch (error) {
+    // Filesystem not writable (e.g., Vercel serverless) - log warning
+    console.warn("Cannot write to filesystem - changes not persisted. Use Supabase instead.");
+  }
 }
