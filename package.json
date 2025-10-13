@@ -16,7 +16,7 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run build:client && npm run build:server",
-    "build:client": "vite build",
+    "build:client": "vite build && cp dist/index.html dist/404.html",
     "build:server": "vite build --config vite.config.server.ts",
     "prestart": "npm run build",
     "start": "node dist/server/node-build.mjs",
