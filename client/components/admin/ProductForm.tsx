@@ -19,6 +19,7 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
   const [variants, setVariants] = useState<ProductVariant[]>(initial?.variants || []);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const [categoryId, setCategoryId] = useState<string>(String((initial as any)?.categoryId || ""));
+  const [isConverting, setIsConverting] = useState(false);
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -42,6 +43,68 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
 
   function removeVariant(idx: number) {
     setVariants((v)=> v.filter((_, i)=> i!==idx));
+  }
+
+  // Auto-convert currency when TND is changed
+  async function onPriceChange(currency: keyof typeof emptyPrice, value: number) {
+    const newPrice = { ...price, [currency]: value };
+    setPrice(newPrice);
+
+    // Only auto-convert if changing TND
+    if (currency === "TND" && value > 0) {
+      setIsConverting(true);
+      try {
+        const res = await fetch(`/api/currency/convert?amount=${value}&from=TND`);
+        if (res.ok) {
+          const data = await res.json();
+          setPrice({
+            TND: value,
+            USD: data.converted.USD || 0,
+            EUR: data.converted.EUR || 0,
+            EGP: data.converted.EGP || 0,
+          });
+        }
+      } catch (error) {
+        console.error("Currency conversion failed:", error);
+      } finally {
+        setIsConverting(false);
+      }
+    }
+  }
+
+  // Auto-convert variant price when TND is changed
+  async function onVariantPriceChange(idx: number, currency: keyof typeof emptyPrice, value: number) {
+    updateVarPrice(idx, currency, value);
+
+    // Only auto-convert if changing TND
+    if (currency === "TND" && value > 0) {
+      setIsConverting(true);
+      try {
+        const res = await fetch(`/api/currency/convert?amount=${value}&from=TND`);
+        if (res.ok) {
+          const data = await res.json();
+          setVariants((v) =>
+            v.map((it, i) =>
+              i === idx
+                ? {
+                    ...it,
+                    price: {
+                      TND: value,
+                      USD: data.converted.USD || 0,
+                      EUR: data.converted.EUR || 0,
+                      EGP: data.converted.EGP || 0,
+                    },
+                  }
+                : it
+            )
+          );
+        }
+      } catch (error) {
+        console.error("Currency conversion failed:", error);
+      } finally {
+        setIsConverting(false);
+      }
+    }
   }
 
   useEffect(() => {
@@ -83,12 +146,22 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
       </div>
 
       <div className="grid gap-2">
-        <label className="text-sm font-medium">Base Price</label>
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-medium">Base Price</label>
+          {isConverting && <span className="text-xs text-muted-foreground animate-pulse">Converting...</span>}
+        </div>
+        <p className="text-xs text-muted-foreground">💡 Enter TND price to auto-fill other currencies</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          {(["USD","EUR","TND","EGP"] as const).map((k)=> (
+          {(["TND","USD","EUR","EGP"] as const).map((k)=> (
             <div key={k} className="flex items-center gap-2">
-              <span className="text-xs w-10">{k}</span>
-              <input type="number" className="rounded border px-2 py-1 bg-background flex-1" value={price[k]} onChange={(e)=>setPrice({...price, [k]: Number(e.target.value)})} />
+              <span className="text-xs w-10 font-semibold">{k}</span>
+              <input 
+                type="number" 
+                step="0.01"
+                className="rounded border px-2 py-1 bg-background flex-1" 
+                value={price[k]} 
+                onChange={(e)=>onPriceChange(k, Number(e.target.value))} 
+              />
             </div>
           ))}
         </div>
@@ -123,10 +196,16 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
                   <Button variant="ghost" onClick={()=>removeVariant(idx)}>Remove</Button>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
-                  {(["USD","EUR","TND","EGP"] as const).map((k)=> (
+                  {(["TND","USD","EUR","EGP"] as const).map((k)=> (
                     <div key={k} className="flex items-center gap-2">
-                      <span className="text-xs w-10">{k}</span>
-                      <input type="number" className="rounded border px-2 py-1 bg-background flex-1" value={v.price[k]} onChange={(e)=>updateVarPrice(idx, k, Number(e.target.value))} />
+                      <span className="text-xs w-10 font-semibold">{k}</span>
+                      <input 
+                        type="number" 
+                        step="0.01"
+                        className="rounded border px-2 py-1 bg-background flex-1" 
+                        value={v.price[k]} 
+                        onChange={(e)=>onVariantPriceChange(idx, k, Number(e.target.value))} 
+                      />
                     </div>
                   ))}
                 </div>
