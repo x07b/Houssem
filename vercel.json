@@ -1,14 +1,10 @@
 {
   "buildCommand": "pnpm build:client",
   "outputDirectory": "dist",
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/((?!api|assets|.*\\.).*)$",
+      "destination": "/index.html"
     }
   ]
 }
