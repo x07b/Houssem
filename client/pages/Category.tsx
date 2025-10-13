@@ -66,7 +66,7 @@ export default function CategoryPage() {
             <h2 className="text-lg font-semibold">No products yet</h2>
             <p className="mt-1 text-sm text-muted-foreground">No items found for {category?.name ?? slug}. Add products from the admin area.</p>
             <div className="mt-4">
-              <a href="/admin" className="underline">Go to Admin</a>
+              <a href="/admin" onClick={(e)=>{ e.preventDefault(); window.history.pushState({}, '', '/admin'); window.dispatchEvent(new PopStateEvent('popstate')); }} className="underline">Go to Admin</a>
             </div>
           </div>
         </div>

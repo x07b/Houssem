@@ -25,6 +25,7 @@ export default defineConfig(({ mode }) => {
     build: {
       // Use "dist" unless you also change Vercel Output Directory to "dist/spa"
       outDir: "dist",
+      sourcemap: true,
     },
     plugins: [react(), expressPlugin()],
     define: {
