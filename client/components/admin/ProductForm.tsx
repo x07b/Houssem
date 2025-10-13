@@ -25,7 +25,20 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
     const f = e.target.files?.[0];
     if (!f) return;
     const reader = new FileReader();
-    reader.onload = () => setImage(String(reader.result || ""));
+    reader.onload = async () => {
+      const base64 = String(reader.result || "");
+      try {
+        const res = await fetch('/api/upload-image', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fileBase64: base64 }) });
+        if (res.ok) {
+          const data = await res.json();
+          setImage(String(data.url || base64));
+        } else {
+          setImage(base64);
+        }
+      } catch {
+        setImage(base64);
+      }
+    };
     reader.readAsDataURL(f);
   }
 
@@ -54,16 +67,15 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
     if (currency === "TND" && value > 0) {
       setIsConverting(true);
       try {
-        const res = await fetch(`/api/currency/convert?amount=${value}&from=TND`);
-        if (res.ok) {
-          const data = await res.json();
-          setPrice({
-            TND: value,
-            USD: data.converted.USD || 0,
-            EUR: data.converted.EUR || 0,
-            EGP: data.converted.EGP || 0,
-          });
-        }
+        const res = await fetch('/api/admin/rate');
+        const data = res.ok ? await res.json() : { usdToTnd: 0 };
+        const usdToTnd = Number(data.usdToTnd || 0);
+        setPrice({
+          TND: value,
+          USD: usdToTnd > 0 ? Number((value / usdToTnd).toFixed(2)) : 0,
+          EUR: 0,
+          EGP: 0,
+        });
       } catch (error) {
         console.error("Currency conversion failed:", error);
       } finally {
@@ -80,25 +92,24 @@ export default function ProductForm({ initial, onCancel, onSave }: Props) {
     if (currency === "TND" && value > 0) {
       setIsConverting(true);
       try {
-        const res = await fetch(`/api/currency/convert?amount=${value}&from=TND`);
-        if (res.ok) {
-          const data = await res.json();
-          setVariants((v) =>
-            v.map((it, i) =>
-              i === idx
-                ? {
-                    ...it,
-                    price: {
-                      TND: value,
-                      USD: data.converted.USD || 0,
-                      EUR: data.converted.EUR || 0,
-                      EGP: data.converted.EGP || 0,
-                    },
-                  }
-                : it
-            )
-          );
-        }
+        const res = await fetch('/api/admin/rate');
+        const data = res.ok ? await res.json() : { usdToTnd: 0 };
+        const usdToTnd = Number(data.usdToTnd || 0);
+        setVariants((v) =>
+          v.map((it, i) =>
+            i === idx
+              ? {
+                  ...it,
+                  price: {
+                    TND: value,
+                    USD: usdToTnd > 0 ? Number((value / usdToTnd).toFixed(2)) : 0,
+                    EUR: 0,
+                    EGP: 0,
+                  },
+                }
+              : it
+          )
+        );
       } catch (error) {
         console.error("Currency conversion failed:", error);
       } finally {

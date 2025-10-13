@@ -50,6 +50,13 @@ create table if not exists promos (
   created_at timestamptz not null default now()
 );
 
+-- Key-value settings (e.g., currency rates)
+create table if not exists settings (
+  key text primary key,
+  value text not null,
+  updated_at timestamptz not null default now()
+);
+
 -- 2) Insert admin user `root` with bcrypt hash for password `root`
 -- Use pgcrypto's crypt() with bcrypt (blowfish) salt
 -- Ensure optional columns exist on older databases
@@ -72,6 +79,7 @@ alter table categories enable row level security;
 alter table products enable row level security;
 alter table banners enable row level security;
 alter table promos enable row level security;
+alter table settings enable row level security;
 
 -- No public access to admins (service key must be used server-side)
 drop policy if exists admins_no_access on admins;
@@ -109,6 +117,16 @@ create policy promos_read_anon on promos
 drop policy if exists promos_read_auth on promos;
 create policy promos_read_auth on promos
   for select to authenticated using (true);
+
+-- Public read for settings (only for GET)
+drop policy if exists settings_read_anon on settings;
+create policy settings_read_anon on settings
+  for select to anon using (true);
+drop policy if exists settings_read_auth on settings;
+create policy settings_read_auth on settings
+  for select to authenticated using (true);
+
+-- No public writes to settings (server-side via service key bypasses RLS)
 
 -- Optional: allow service role to manage data (checked by server via service key)
 -- Note: service role bypasses RLS, so no explicit write policies are required for server-side usage.

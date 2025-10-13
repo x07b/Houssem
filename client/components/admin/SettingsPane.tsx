@@ -26,10 +26,23 @@ export default function SettingsPane({ token }: { token: string | null }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [usdToTnd, setUsdToTnd] = useState<number>(0);
+  const [rateUpdatedAt, setRateUpdatedAt] = useState<string>("");
 
   useEffect(() => { 
     afetch("/api/admin/toggles").then(setToggles).catch(()=>{}); 
     afetch("/api/admin/profile").then(setProfile).catch(()=>{});
+    // fetch current rate
+    (async ()=>{
+      try {
+        const r = await fetch('/api/admin/rate');
+        if (r.ok) {
+          const d = await r.json();
+          setUsdToTnd(Number(d.usdToTnd||0));
+          setRateUpdatedAt(d.updatedAt ? new Date(d.updatedAt).toLocaleString() : "");
+        }
+      } catch {}
+    })();
   }, []);
 
   const saveToggles = async () => {
@@ -40,6 +53,18 @@ export default function SettingsPane({ token }: { token: string | null }) {
       toast.success("Settings saved successfully");
     } catch (e: any) {
       toast.error(e.message || "Failed to save settings");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveRate = async () => {
+    try {
+      setLoading(true);
+      await afetch('/api/admin/rate', { method: 'PUT', body: JSON.stringify({ usdToTnd }) });
+      toast.success('Rate saved');
+    } catch (e: any) {
+      toast.error(e.message || 'Failed to save rate');
     } finally {
       setLoading(false);
     }
@@ -95,10 +120,11 @@ export default function SettingsPane({ token }: { token: string | null }) {
       </div>
 
       <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
           <TabsTrigger value="site">Site Settings</TabsTrigger>
+          <TabsTrigger value="rates">Daily Rate</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile" className="space-y-4">
@@ -139,6 +165,23 @@ export default function SettingsPane({ token }: { token: string | null }) {
               <Button onClick={updateProfile} disabled={loading}>
                 {loading ? "Saving..." : "Update Profile"}
               </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="rates" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>USD ↔ TND Daily Rate</CardTitle>
+              <CardDescription>Set today's conversion rate. All prices will auto-calc from TND input.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>1 USD equals (TND)</Label>
+                <Input type="number" step="0.01" value={usdToTnd} onChange={(e)=>setUsdToTnd(Number(e.target.value))} />
+                {rateUpdatedAt && <p className="text-xs text-muted-foreground">Updated: {rateUpdatedAt}</p>}
+              </div>
+              <Button onClick={saveRate} disabled={loading}>{loading ? 'Saving...' : 'Save Rate'}</Button>
             </CardContent>
           </Card>
         </TabsContent>
