@@ -5,7 +5,10 @@ import { handleCheckout } from "../../server/routes/checkout";
 
 const app = express();
 app.use(express.json({ limit: "10mb" }));
+// Support both function path and site path
 app.post("/api/checkout", handleCheckout);
+app.post("/.netlify/functions/checkout", handleCheckout);
+app.post("/", handleCheckout);
 
 const handler = serverless(app);
 
