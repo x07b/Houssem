@@ -73,7 +73,30 @@ export const requireAuth: RequestHandler = (req, res, next) => {
 };
 
 // Orders
-export const listOrders: RequestHandler = (_req, res) => {
+export const listOrders: RequestHandler = async (_req, res) => {
+  try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE || process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+    if (url && key) {
+      const { data, error } = await supabaseAdmin
+        .from("orders")
+        .select("code, customer_name, customer_email, customer_whatsapp, currency, notes, subtotal, created_at")
+        .order("created_at", { ascending: false });
+      if (!error && Array.isArray(data)) {
+        const mapped = data.map((o: any) => ({
+          code: o.code,
+          createdAt: new Date(o.created_at).getTime(),
+          customer: { name: o.customer_name, email: o.customer_email, whatsapp: o.customer_whatsapp },
+          currency: o.currency,
+          items: [],
+          status: "pending",
+        }));
+        return res.json(mapped);
+      }
+    }
+  } catch (_e) {
+    // fallback below
+  }
   const store = readStore();
   res.json(store.orders);
 };
