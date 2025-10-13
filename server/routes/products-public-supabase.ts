@@ -1,9 +1,20 @@
 import { RequestHandler } from "express";
-import { supabase } from "../supabase";
+import { createClient } from "@supabase/supabase-js";
+
+// Create public Supabase client (uses anon key for RLS)
+function getSupabaseClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "";
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || "";
+  if (!url || !anonKey) {
+    throw new Error("Missing Supabase configuration");
+  }
+  return createClient(url, anonKey);
+}
 
 export const listPublicProductsSupabase: RequestHandler = async (req, res) => {
   try {
     const slug = String(req.query.category || "").trim();
+    const supabase = getSupabaseClient();
     
     let query = supabase
       .from("products")
@@ -24,7 +35,8 @@ export const listPublicProductsSupabase: RequestHandler = async (req, res) => {
 
     // Filter by category if slug provided
     if (slug) {
-      const { data: category } = await supabase
+      const supabase2 = getSupabaseClient();
+      const { data: category } = await supabase2
         .from("categories")
         .select("id")
         .eq("slug", slug)
@@ -67,6 +79,7 @@ export const listPublicProductsSupabase: RequestHandler = async (req, res) => {
 export const getPublicProductSupabase: RequestHandler = async (req, res) => {
   try {
     const id = String(req.params.id);
+    const supabase = getSupabaseClient();
 
     const { data, error } = await supabase
       .from("products")
