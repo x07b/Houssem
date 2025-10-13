@@ -1,4 +1,5 @@
 {
+  "buildCommand": "pnpm build:client",
   "outputDirectory": "dist",
   "rewrites": [
     {

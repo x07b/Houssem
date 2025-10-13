@@ -154,7 +154,7 @@ export const handleCheckout: RequestHandler = async (req, res) => {
       whatsapp: parsed.data.whatsapp 
     },
     currency: parsed.data.currency,
-    items: parsed.data.items,
+    items: parsed.data.items.map(item => ({ id: item.id, qty: item.qty })),
     status: "pending",
     promoCode: parsed.data.promoCode,
     notes: parsed.data.notes,

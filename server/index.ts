@@ -5,7 +5,7 @@ import { handleDemo } from "./routes/demo";
 import { handleSendEmail } from "./routes/order";
 import { adminLogin, requireAuth, listProducts, createProduct, updateProduct, deleteProduct, listBanners, upsertBanner, deleteBanner, getToggles, setToggles, listPromos, upsertPromo, deletePromo, listOrders, getProfile, updateProfile, changePassword } from "./routes/admin";
 import { listProductsSupabase, createProductSupabase, updateProductSupabase, deleteProductSupabase } from "./routes/products-supabase";
-// import { handleCheckout, getOrderByCode, handleFlouciWebhook } from "./routes/checkout"; // Commented out for now
+import { handleCheckout, getOrderByCode, handleFlouciWebhook } from "./routes/checkout";
 import { validatePromo } from "./routes/promo";
 import { listPublicProducts, getPublicProduct } from "./routes/products";
 import { listPublicProductsSupabase, getPublicProductSupabase } from "./routes/products-public-supabase";
@@ -31,8 +31,8 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
   app.post("/api/send-email", handleSendEmail);
-  // app.post("/api/checkout", handleCheckout); // Commented out for now
-  // app.post("/api/webhook/flouci", handleFlouciWebhook); // Commented out for now
+  app.post("/api/checkout", handleCheckout);
+  app.post("/api/webhook/flouci", handleFlouciWebhook);
   app.get("/api/promo/:code", validatePromo);
   app.get("/api/currency/convert", convertCurrency);
   
@@ -52,7 +52,7 @@ export function createServer() {
   app.delete("/api/categories/:id", deleteCategory);
 
   // Orders API
-  // app.get("/api/orders/:code", getOrderByCode); // Commented out for now
+  app.get("/api/orders/:code", getOrderByCode);
 
   // Admin API
   app.post("/api/admin/login", adminLogin);
