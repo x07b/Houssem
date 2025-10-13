@@ -138,3 +138,54 @@ create policy settings_read_auth on settings
 
 -- Optional: allow service role to manage data (checked by server via service key)
 -- Note: service role bypasses RLS, so no explicit write policies are required for server-side usage.
+
+-- 5) Orders schema (for checkout flow without online payment)
+create table if not exists orders (
+  id uuid primary key default gen_random_uuid(),
+  code text not null unique,
+  customer_name text not null,
+  customer_email text not null,
+  customer_whatsapp text,
+  currency text not null,
+  notes text,
+  subtotal numeric(10,2) not null default 0,
+  requires_payment boolean not null default false,
+  payment_link text,
+  payment_status text default 'pending', -- 'pending' | 'paid' | 'failed'
+  created_at timestamptz not null default now()
+);
+
+create table if not exists order_items (
+  id uuid primary key default gen_random_uuid(),
+  order_id uuid not null references orders(id) on delete cascade,
+  product_id uuid not null references products(id) on delete restrict,
+  qty integer not null check (qty > 0),
+  unit_price numeric(10,2) not null,
+  line_total numeric(10,2) generated always as (qty * unit_price) stored
+);
+
+-- Helpful indexes
+create index if not exists idx_orders_code on orders(code);
+create index if not exists idx_order_items_order on order_items(order_id);
+create index if not exists idx_order_items_product on order_items(product_id);
+
+-- Enable RLS
+alter table orders enable row level security;
+alter table order_items enable row level security;
+
+-- Public read policies (writes are server-side with service role)
+drop policy if exists orders_read_anon on orders;
+create policy orders_read_anon on orders
+  for select to anon using (true);
+
+drop policy if exists orders_read_auth on orders;
+create policy orders_read_auth on orders
+  for select to authenticated using (true);
+
+drop policy if exists order_items_read_anon on order_items;
+create policy order_items_read_anon on order_items
+  for select to anon using (true);
+
+drop policy if exists order_items_read_auth on order_items;
+create policy order_items_read_auth on order_items
+  for select to authenticated using (true);
