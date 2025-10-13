@@ -57,10 +57,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           description,
           image_url,
           price,
-          discount_percent,
-          variants,
           category_id,
-          published,
           created_at,
           categories (
             id,
@@ -81,11 +78,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         title: p.title,
         description: p.description || '',
         image: p.image_url,
-        price: p.price,
-        discountPercent: p.discount_percent || 0,
-        variants: p.variants || [],
+        price: { USD: typeof p.price === 'string' ? parseFloat(p.price) : Number(p.price || 0), EUR: 0, TND: 0, EGP: 0 },
         categoryId: p.category_id,
-        published: p.published,
       }));
 
       return res.json(products);
@@ -99,13 +93,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from('products')
         .insert({
           title: body.title,
-          description: body.description,
-          image_url: body.image,
-          price: body.price,
-          discount_percent: body.discountPercent || 0,
-          variants: body.variants || [],
-          category_id: body.categoryId,
-          published: true,
+          description: body.description || '',
+          image_url: body.image || '',
+          price: Number(body.price || 0),
+          category_id: body.categoryId || null,
         })
         .select()
         .single();
@@ -118,11 +109,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.json({
         id: data.id,
         title: data.title,
-        description: data.description,
-        image: data.image_url,
-        price: data.price,
-        discountPercent: data.discount_percent,
-        variants: data.variants,
+        description: data.description || '',
+        image: data.image_url || '',
+        price: { USD: Number(data.price || 0), EUR: 0, TND: 0, EGP: 0 },
+        variants: [],
         categoryId: data.category_id,
       });
     }
@@ -143,10 +133,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           title: body.title,
           description: body.description,
           image_url: body.image,
-          price: body.price,
-          discount_percent: body.discountPercent || 0,
-          variants: body.variants || [],
-          category_id: body.categoryId,
+          price: Number(body.price || 0),
+          category_id: body.categoryId || null,
         })
         .eq('id', id)
         .select()
@@ -160,11 +148,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.json({
         id: data.id,
         title: data.title,
-        description: data.description,
-        image: data.image_url,
-        price: data.price,
-        discountPercent: data.discount_percent,
-        variants: data.variants,
+        description: data.description || '',
+        image: data.image_url || '',
+        price: { USD: Number(data.price || 0), EUR: 0, TND: 0, EGP: 0 },
+        variants: [],
         categoryId: data.category_id,
       });
     }
