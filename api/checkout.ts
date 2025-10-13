@@ -1,6 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { z } from 'zod';
 import { createClient } from '@supabase/supabase-js';
+import { readStore, writeStore } from '../server/store';
+import type { Order } from '../shared/entities';
 
 export const config = {
   api: {
@@ -44,6 +46,31 @@ export default async function checkout(req: VercelRequest, res: VercelResponse) 
     }
 
     const code = genCode();
+
+    // Always persist to local store used by Admin dashboard
+    try {
+      const store = readStore();
+      const order: Order = {
+        code,
+        createdAt: Date.now(),
+        customer: {
+          name: parsed.data.name,
+          email: parsed.data.email,
+          whatsapp: parsed.data.whatsapp,
+        },
+        currency: parsed.data.currency as any,
+        items: parsed.data.items.map(i => ({ id: i.id, qty: i.qty })),
+        status: 'pending',
+        promoCode: undefined,
+        notes: parsed.data.notes,
+        paymentStatus: 'pending',
+      };
+      store.orders.push(order);
+      writeStore(store);
+    } catch (e) {
+      // Non-fatal on serverless filesystems; admin list may be empty
+      console.warn('local_store_write_failed', e);
+    }
 
     // Optional: persist to Supabase if service role is present
     const hasSupabase = !!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
