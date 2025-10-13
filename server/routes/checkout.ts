@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { z } from "zod";
 import { readStore, writeStore } from "../store";
-import { Order } from "@shared/entities";
+import { Order } from "../../shared/entities";
 
 const Input = z.object({
   name: z.string().min(2),
