@@ -18,14 +18,20 @@ const defaultState: any = {
 };
 
 export function ensureStore() {
-  if (!fs.existsSync(DATA_PATH)) fs.mkdirSync(DATA_PATH, { recursive: true });
-  if (!fs.existsSync(FILE)) fs.writeFileSync(FILE, JSON.stringify(defaultState, null, 2));
+  try {
+    if (!fs.existsSync(DATA_PATH)) fs.mkdirSync(DATA_PATH, { recursive: true });
+    if (!fs.existsSync(FILE)) fs.writeFileSync(FILE, JSON.stringify(defaultState, null, 2));
+  } catch (error) {
+    // Filesystem not writable (e.g., Vercel serverless) - that's ok, use Supabase instead
+    console.warn("Cannot write to filesystem - using Supabase or in-memory storage");
+  }
 }
 
 export function readStore(): StoreState {
-  ensureStore();
-  const raw = fs.readFileSync(FILE, "utf-8");
-  const store = JSON.parse(raw) as StoreState & { categories?: any[] };
+  try {
+    ensureStore();
+    const raw = fs.readFileSync(FILE, "utf-8");
+    const store = JSON.parse(raw) as StoreState & { categories?: any[] };
   
   // Ensure all required fields are arrays
   let updated = false;
