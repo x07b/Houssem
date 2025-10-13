@@ -139,65 +139,65 @@ async function initiateFlouciPayment(amount: number, orderCode: string) {
 }
 
 export const handleCheckout: RequestHandler = async (req, res) => {
-  const parsed = Input.safeParse(req.body);
-  if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
-  
-  const code = genCode();
-  const store = readStore();
-  
-  const order: Order = {
-    code,
-    createdAt: Date.now(),
-    customer: { 
-      name: parsed.data.name, 
-      email: parsed.data.email, 
-      whatsapp: parsed.data.whatsapp 
-    },
-    currency: parsed.data.currency,
-    items: parsed.data.items.map(item => ({ id: item.id, qty: item.qty })),
-    status: "pending",
-    promoCode: parsed.data.promoCode,
-    notes: parsed.data.notes,
-    paymentStatus: "pending",
-  };
-  
-  store.orders.push(order);
-  writeStore(store);
+  try {
+    const parsed = Input.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: parsed.error.flatten() });
+    }
 
-  // Initiate Flouci payment if amount > 0 and currency is TND
-  let paymentLink = null;
-  if (parsed.data.subtotal > 0 && parsed.data.currency === "TND") {
-    const flouciResponse = await initiateFlouciPayment(parsed.data.subtotal, code);
-    if (flouciResponse?.payment_url) {
-      paymentLink = flouciResponse.payment_url;
-      // Store payment ID in order
-      const updatedStore = readStore();
-      const orderIdx = updatedStore.orders.findIndex(o => o.code === code);
-      if (orderIdx !== -1) {
-        updatedStore.orders[orderIdx].paymentId = flouciResponse.payment_id || flouciResponse.id;
-        writeStore(updatedStore);
+    const code = genCode();
+    const store = readStore();
+
+    const order: Order = {
+      code,
+      createdAt: Date.now(),
+      customer: {
+        name: parsed.data.name,
+        email: parsed.data.email,
+        whatsapp: parsed.data.whatsapp,
+      },
+      currency: parsed.data.currency,
+      items: parsed.data.items.map((item) => ({ id: item.id, qty: item.qty })),
+      status: "pending",
+      promoCode: parsed.data.promoCode,
+      notes: parsed.data.notes,
+      paymentStatus: "pending",
+    };
+
+    store.orders.push(order);
+    writeStore(store);
+
+    // Initiate Flouci payment if amount > 0 and currency is TND
+    let paymentLink = null as string | null;
+    if (parsed.data.subtotal > 0 && parsed.data.currency === "TND") {
+      const flouciResponse = await initiateFlouciPayment(parsed.data.subtotal, code);
+      if (flouciResponse?.payment_url) {
+        paymentLink = flouciResponse.payment_url as string;
+        // Store payment ID in order
+        const updatedStore = readStore();
+        const orderIdx = updatedStore.orders.findIndex((o) => o.code === code);
+        if (orderIdx !== -1) {
+          updatedStore.orders[orderIdx].paymentId = flouciResponse.payment_id || flouciResponse.id;
+          writeStore(updatedStore);
+        }
       }
     }
+
+    // Prepare items details for email
+    const itemsDetails = parsed.data.items
+      .filter((item) => item.id && item.qty)
+      .map((item) => `- ${item.id} x ${item.qty}`)
+      .join("\n");
+
+    // Send confirmation emails (async, don't wait)
+    sendOrderConfirmationEmail(order, itemsDetails).catch((e) => console.error("Email send failed:", e));
+
+    const whatsapp = process.env.WHATSAPP_NUMBER || null;
+    return res.json({ panierCode: code, whatsapp, paymentLink, requiresPayment: !!paymentLink });
+  } catch (error: any) {
+    console.error("/api/checkout failed:", error?.stack || error);
+    return res.status(500).json({ error: "Checkout failed", detail: String(error?.message || error) });
   }
-
-  // Prepare items details for email
-  const itemsDetails = parsed.data.items
-    .filter(item => item.id && item.qty)
-    .map(item => `- ${item.id} x ${item.qty}`)
-    .join("\n");
-
-  // Send confirmation emails (async, don't wait)
-  sendOrderConfirmationEmail(order, itemsDetails).catch(e => 
-    console.error("Email send failed:", e)
-  );
-
-  const whatsapp = process.env.WHATSAPP_NUMBER || null;
-  res.json({ 
-    panierCode: code, 
-    whatsapp, 
-    paymentLink,
-    requiresPayment: !!paymentLink 
-  });
 };
 
 export const getOrderByCode: RequestHandler = (req, res) => {

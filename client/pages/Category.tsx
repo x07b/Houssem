@@ -15,7 +15,8 @@ export default function CategoryPage() {
   useEffect(() => {
     let mounted = true;
     function slugify(input: string) {
-      return input.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+      const s = String(input || "");
+      return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
     }
     async function run() {
       setLoading(true);

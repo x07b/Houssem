@@ -8,7 +8,8 @@ export default function CategoryBar() {
   const [cats, setCats] = useState<Category[]>([]);
   useEffect(() => {
     function slugify(input: string) {
-      return input.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+      const s = String(input || "");
+      return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
     }
     async function load(){
       const { data, error } = await supabase.from("categories").select("id,name");

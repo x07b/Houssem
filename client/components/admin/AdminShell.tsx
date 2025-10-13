@@ -90,7 +90,7 @@ export default function AdminShell({ section, onSelect, headerRight, children }:
                 )}
                 <div>
                   <h1 className="text-3xl font-bold tracking-tight">{currentSection?.label}</h1>
-                  <p className="text-sm text-muted-foreground mt-1">Manage your {currentSection?.label.toLowerCase()}</p>
+                  <p className="text-sm text-muted-foreground mt-1">Manage your {(currentSection?.label || "").toLowerCase()}</p>
                 </div>
               </div>
               {headerRight && (

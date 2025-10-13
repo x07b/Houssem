@@ -140,7 +140,7 @@ function SearchContent({ onClose }: { onClose: () => void }) {
 
   useEffect(() => {
     if (!debounced.trim()) { setResults([]); setIsLoading(false); setError(null); return; }
-    const q = debounced.trim().toLowerCase();
+    const q = (debounced || "").trim().toLowerCase();
     track("search_typed", { query: q });
     if (controllerRef.current) controllerRef.current.abort();
     const ctrl = new AbortController();
@@ -152,7 +152,7 @@ function SearchContent({ onClose }: { onClose: () => void }) {
     const timeout = setTimeout(() => {
       if (ctrl.signal.aborted) return;
       const found = products.filter(p => {
-        const text = `${p.title} ${p.description || ""} ${(p as any).category || ""} ${(p as any).platform || ""}`.toLowerCase();
+        const text = `${p.title || ""} ${p.description || ""} ${(p as any).category || ""} ${(p as any).platform || ""}`.toLowerCase();
         return text.includes(q);
       });
       cacheRef.current.set(q, found);

@@ -47,7 +47,7 @@ export default function Header() {
   // Global shortcuts: Cmd/Ctrl+K and '/'
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const isModK = (e.key.toLowerCase() === 'k') && (e.metaKey || e.ctrlKey);
+      const isModK = ((e.key || '').toLowerCase() === 'k') && (e.metaKey || e.ctrlKey);
       const isSlash = e.key === '/';
       if (isModK || isSlash) {
         e.preventDefault();
@@ -59,7 +59,8 @@ export default function Header() {
   }, []);
 
   function slugify(input: string) {
-    return input.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+    const s = String(input || "");
+    return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
   }
 
   const { data: categories = [], isLoading: catLoading, isError: catError } = useQuery({

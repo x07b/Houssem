@@ -43,7 +43,12 @@ export default function ProductPage() {
         )}
         <div className="space-y-4">
           <div className="flex items-start justify-between gap-3">
-            <h1 className="text-3xl font-extrabold tracking-tight">{p.title}</h1>
+            <div>
+              <h1 className="text-3xl font-extrabold tracking-tight">{p.title}</h1>
+              {p.id && (
+                <div className="mt-1 text-sm text-muted-foreground">SKU: {p.id}</div>
+              )}
+            </div>
             <Button variant={wish ? "default" : "outline"} size="icon" className="rounded-full" onClick={toggleWish} aria-label="Add to wishlist">
               <Heart className={wish ? "fill-current" : ""} />
             </Button>
